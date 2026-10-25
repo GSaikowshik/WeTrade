@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { api } from '../api/client';
-import { X, Lock, Mail, User as UserIcon, AlertCircle, Sparkles } from 'lucide-react';
 
 interface AuthModalProps {
   onClose: () => void;
@@ -36,92 +35,104 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center">
-              <Sparkles className="w-4 h-4" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+      <div className="bg-surface-card border border-border-subtle rounded-2xl w-full max-w-md overflow-hidden shadow-xl">
+        <div className="p-4 border-b border-border-subtle flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary font-bold text-xs">
+              W
             </div>
             <div>
-              <h2 className="font-bold text-white text-base">
+              <h2 className="font-semibold text-text-primary text-base">
                 {isRegister ? 'Open Virtual Account' : 'Welcome to We Trade'}
               </h2>
-              <p className="text-xs text-slate-400">
-                {isRegister ? 'Receive ₹100,000 in simulated practice capital' : 'Sign in to access your portfolio & journal'}
+              <p className="text-xs text-text-secondary">
+                {isRegister ? 'Receive ₹1,00,000 in simulated practice capital' : 'Sign in to access your portfolio & journal'}
               </p>
             </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+            className="text-text-secondary hover:text-text-primary p-1 rounded-lg hover:bg-surface-subtle transition"
           >
-            <X className="w-5 h-5" />
+            <span className="material-symbols-outlined text-[20px]">close</span>
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="p-5 space-y-4 font-body-md text-body-md">
           {isRegister && (
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-300">Full Name</label>
+              <label className="text-xs font-medium text-text-primary">Full Name</label>
               <div className="relative">
-                <UserIcon className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+                <span className="material-symbols-outlined absolute left-3 top-2.5 text-text-tertiary text-[18px]">
+                  person
+                </span>
                 <input
                   type="text"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  placeholder="e.g. Aditi Sharma"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder:text-slate-600"
+                  placeholder="e.g. Aditya Sharma"
+                  className="w-full bg-surface-subtle border border-border-subtle rounded-lg pl-9 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-text-tertiary"
                 />
               </div>
             </div>
           )}
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-300">Email Address</label>
+            <label className="text-xs font-medium text-text-primary">Email Address</label>
             <div className="relative">
-              <Mail className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+              <span className="material-symbols-outlined absolute left-3 top-2.5 text-text-tertiary text-[18px]">
+                mail
+              </span>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                placeholder="you@domain.com"
                 required
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder:text-slate-600"
+                className="w-full bg-surface-subtle border border-border-subtle rounded-lg pl-9 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-text-tertiary"
               />
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-300">Password</label>
+            <label className="text-xs font-medium text-text-primary">Password</label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+              <span className="material-symbols-outlined absolute left-3 top-2.5 text-text-tertiary text-[18px]">
+                lock
+              </span>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 required
-                minLength={6}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-9 pr-3 py-2 text-sm text-white focus:outline-none focus:border-blue-500 placeholder:text-slate-600"
+                className="w-full bg-surface-subtle border border-border-subtle rounded-lg pl-9 pr-3 py-2 text-sm text-text-primary focus:outline-none focus:ring-1 focus:ring-primary placeholder:text-text-tertiary"
               />
             </div>
           </div>
 
           {error && (
-            <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-lg flex items-center gap-2 text-xs text-rose-400">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <div className="p-3 bg-market-down-subtle border border-market-down/20 rounded-lg flex items-center gap-2 text-xs text-market-down">
+              <span className="material-symbols-outlined text-[16px] shrink-0">error</span>
               <span>{error}</span>
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm transition shadow-lg shadow-blue-500/20 disabled:opacity-50"
-          >
-            {loading ? 'Please wait...' : isRegister ? 'Register & Claim ₹100,000' : 'Sign In'}
-          </button>
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-medium text-xs transition-colors shadow-sm cursor-pointer disabled:opacity-50"
+            >
+              {loading
+                ? 'Validating...'
+                : isRegister
+                ? 'Create Simulator Account'
+                : 'Sign In to Simulator'}
+            </button>
+          </div>
 
           <div className="text-center pt-2">
             <button
@@ -130,11 +141,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onSuccess }) => {
                 setIsRegister(!isRegister);
                 setError(null);
               }}
-              className="text-xs text-slate-400 hover:text-blue-400 transition"
+              className="text-xs text-primary hover:underline cursor-pointer"
             >
               {isRegister
-                ? 'Already have an account? Sign in here'
-                : "Don't have an account? Create one with ₹100,000 practice funds"}
+                ? 'Already have an account? Sign In'
+                : 'Need an account? Open free virtual demo account'}
             </button>
           </div>
         </form>
@@ -142,4 +153,4 @@ export const AuthModal: React.FC<AuthModalProps> = ({ onClose, onSuccess }) => {
     </div>
   );
 };
-
+export default AuthModal;

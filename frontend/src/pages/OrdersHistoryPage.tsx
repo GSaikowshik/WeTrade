@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Order, LedgerEntry } from '../types';
 import { api } from '../api/client';
-import { History, FileText } from 'lucide-react';
+import { toNum, fmtMoney } from '../utils/format';
 
 export const OrdersHistoryPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'orders' | 'ledger'>('orders');
@@ -48,120 +48,122 @@ export const OrdersHistoryPage: React.FC = () => {
       {/* Header & Tabs */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Orders & Transaction Ledger</h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-label-sm text-label-sm text-primary uppercase font-semibold tracking-wider">
+              Ledger
+            </span>
+            <span className="text-text-tertiary">/</span>
+            <span className="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider">
+              Audit Trail
+            </span>
+          </div>
+          <h1 className="font-headline-lg text-headline-lg text-text-primary">Orders & Transaction Ledger</h1>
+          <p className="font-body-sm text-body-sm text-text-secondary mt-1">
             Complete audit trail of simulated order states and append-only cash movements.
           </p>
         </div>
 
         {/* Tab Toggle */}
-        <div className="flex bg-slate-900 border border-slate-800 rounded-xl p-1 w-fit">
+        <div className="flex bg-surface-card border border-border-subtle rounded-xl p-1 w-fit shadow-xs">
           <button
+            type="button"
             onClick={() => setActiveTab('orders')}
-            className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg transition ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
               activeTab === 'orders'
-                ? 'bg-blue-600 text-white shadow'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-primary text-on-primary shadow-xs'
+                : 'text-text-secondary hover:text-text-primary'
             }`}
           >
-            <History className="w-4 h-4" />
-            <span>Orders History ({orders.length})</span>
+            <span className="material-symbols-outlined text-[16px]">receipt_long</span>
+            <span>Simulated Orders ({orders.length})</span>
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('ledger')}
-            className={`flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg transition ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer ${
               activeTab === 'ledger'
-                ? 'bg-blue-600 text-white shadow'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-primary text-on-primary shadow-xs'
+                : 'text-text-secondary hover:text-text-primary'
             }`}
           >
-            <FileText className="w-4 h-4" />
-            <span>Immutable Ledger ({ledger.length})</span>
+            <span className="material-symbols-outlined text-[16px]">account_balance_wallet</span>
+            <span>Cash Ledger ({ledger.length})</span>
           </button>
         </div>
       </div>
 
-      {/* Main Content Area */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm">
-        {loading ? (
-          <div className="py-16 text-center text-slate-500 text-xs">Loading records...</div>
-        ) : activeTab === 'orders' ? (
-          /* Orders Table */
-          orders.length > 0 ? (
+      {/* Orders Tab View */}
+      {activeTab === 'orders' && (
+        <div className="bg-surface-card border border-border-subtle rounded-xl p-5 shadow-sm">
+          {loading ? (
+            <div className="py-12 text-center text-text-secondary text-xs">Loading order ledger...</div>
+          ) : orders.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
+              <table className="w-full text-left font-body-sm text-body-sm">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-400">
-                    <th className="pb-3 font-medium">Order ID</th>
-                    <th className="pb-3 font-medium">Submitted At</th>
-                    <th className="pb-3 font-medium">Asset</th>
-                    <th className="pb-3 font-medium">Side</th>
-                    <th className="pb-3 font-medium">Type</th>
-                    <th className="pb-3 font-medium text-right">Shares</th>
-                    <th className="pb-3 font-medium text-right">Limit Price</th>
-                    <th className="pb-3 font-medium text-right">Fill Price</th>
-                    <th className="pb-3 font-medium text-right">Fees</th>
-                    <th className="pb-3 font-medium text-right">Status</th>
-                    <th className="pb-3 font-medium text-right">Action</th>
+                  <tr className="bg-surface-subtle text-text-secondary font-label-sm text-label-sm uppercase tracking-wider h-9">
+                    <th className="py-2 px-3 rounded-l-md">Time</th>
+                    <th className="py-2 px-3">Symbol</th>
+                    <th className="py-2 px-3">Side</th>
+                    <th className="py-2 px-3">Type</th>
+                    <th className="py-2 px-3 text-right">Qty</th>
+                    <th className="py-2 px-3 text-right">Filled Price</th>
+                    <th className="py-2 px-3 text-right">Total Amount</th>
+                    <th className="py-2 px-3">Status</th>
+                    <th className="py-2 px-3 text-right rounded-r-md">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-surface-container-low">
                   {orders.map((ord) => {
-                    const isFilled = ord.status === 'FILLED';
-                    const isRejected = ord.status === 'REJECTED';
-                    const isPending = ord.status === 'PENDING';
+                    const isBuy = ord.side === 'BUY';
+                    const fillPrice = toNum(ord.average_fill_price || ord.limit_price);
+                    const notional = fillPrice * ord.quantity;
 
                     return (
-                      <tr key={ord.id} className="hover:bg-slate-800/30 transition">
-                        <td className="py-3 font-mono text-slate-400">#{ord.id}</td>
-                        <td className="py-3 text-slate-400">{new Date(ord.created_at).toLocaleString()}</td>
-                        <td className="py-3 font-bold text-white">{ord.asset_symbol}</td>
-                        <td className="py-3">
-                          <span
-                            className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                              ord.side === 'BUY'
-                                ? 'bg-emerald-500/20 text-emerald-400'
-                                : 'bg-rose-500/20 text-rose-400'
-                            }`}
-                          >
+                      <tr key={ord.id} className="hover:bg-surface-subtle/50 transition-colors">
+                        <td className="py-3 px-3 text-text-secondary text-xs font-mono">
+                          {new Date(ord.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </td>
+                        <td className="py-3 px-3 font-semibold text-text-primary font-numeric-sm">
+                          {ord.asset_symbol || ord.asset_id}
+                        </td>
+                        <td className="py-3 px-3">
+                          <span className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase ${
+                            isBuy ? 'bg-market-up-subtle text-market-up' : 'bg-market-down-subtle text-market-down'
+                          }`}>
                             {ord.side}
                           </span>
                         </td>
-                        <td className="py-3 text-slate-300 font-medium">{ord.order_type}</td>
-                        <td className="py-3 text-right font-medium text-slate-200">{ord.quantity}</td>
-                        <td className="py-3 text-right text-slate-400">
-                          {ord.limit_price ? `₹${ord.limit_price.toFixed(2)}` : '—'}
+                        <td className="py-3 px-3 text-text-secondary text-xs uppercase font-mono">
+                          {ord.order_type}
                         </td>
-                        <td className="py-3 text-right font-semibold text-white">
-                          {ord.average_fill_price ? `₹${ord.average_fill_price.toFixed(2)}` : '—'}
+                        <td className="py-3 px-3 text-right font-numeric-sm [font-feature-settings:'tnum'] text-text-primary">
+                          {ord.quantity}
                         </td>
-                        <td className="py-3 text-right text-slate-400">₹{ord.fees_paid.toFixed(2)}</td>
-                        <td className="py-3 text-right">
-                          <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold ${
-                              isFilled
-                                ? 'bg-emerald-500/20 text-emerald-400'
-                                : isRejected
-                                ? 'bg-rose-500/20 text-rose-400'
-                                : isPending
-                                ? 'bg-amber-500/20 text-amber-400'
-                                : 'bg-slate-800 text-slate-400'
-                            }`}
-                          >
+                        <td className="py-3 px-3 text-right font-numeric-sm [font-feature-settings:'tnum'] text-text-primary">
+                          {fmtMoney(fillPrice)}
+                        </td>
+                        <td className="py-3 px-3 text-right font-numeric-sm [font-feature-settings:'tnum'] text-text-primary font-medium">
+                          {fmtMoney(notional)}
+                        </td>
+                        <td className="py-3 px-3">
+                          <span className={`px-2 py-0.5 rounded text-[11px] font-medium uppercase font-mono ${
+                            ord.status === 'FILLED'
+                              ? 'bg-market-up-subtle text-market-up'
+                              : ord.status === 'PENDING'
+                              ? 'bg-amber-50 text-amber-700'
+                              : 'bg-market-down-subtle text-market-down'
+                          }`}>
                             {ord.status}
                           </span>
-                          {ord.rejection_reason && (
-                            <div className="text-[10px] text-rose-400 mt-0.5 max-w-xs text-right">
-                              {ord.rejection_reason}
-                            </div>
-                          )}
                         </td>
-                        <td className="py-3 text-right">
-                          {isPending && (
+                        <td className="py-3 px-3 text-right">
+                          {ord.status === 'PENDING' && (
                             <button
+                              type="button"
                               onClick={() => handleCancelOrder(ord.id)}
                               disabled={cancellingId === ord.id}
-                              className="px-2.5 py-1 text-[11px] font-semibold rounded bg-rose-600/20 hover:bg-rose-600/30 text-rose-400 transition"
+                              className="px-2.5 py-1 text-xs rounded bg-surface-container hover:bg-market-down hover:text-white text-text-secondary transition cursor-pointer"
                             >
                               {cancellingId === ord.id ? 'Cancelling...' : 'Cancel'}
                             </button>
@@ -174,61 +176,61 @@ export const OrdersHistoryPage: React.FC = () => {
               </table>
             </div>
           ) : (
-            <div className="py-16 text-center text-slate-500 text-xs">No simulated orders recorded yet.</div>
-          )
-        ) : (
-          /* Ledger Table */
-          ledger.length > 0 ? (
+            <div className="py-12 text-center text-text-secondary">
+              <span className="material-symbols-outlined text-[32px] text-text-tertiary mb-2 block">
+                receipt_long
+              </span>
+              <p className="font-semibold text-text-primary">No simulated orders yet</p>
+              <p className="text-xs text-text-secondary mt-1">
+                Your executed market & limit orders will appear here.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Ledger Tab View */}
+      {activeTab === 'ledger' && (
+        <div className="bg-surface-card border border-border-subtle rounded-xl p-5 shadow-sm">
+          {loading ? (
+            <div className="py-12 text-center text-text-secondary text-xs">Loading cash ledger...</div>
+          ) : ledger.length > 0 ? (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
+              <table className="w-full text-left font-body-sm text-body-sm">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-400">
-                    <th className="pb-3 font-medium">Entry ID</th>
-                    <th className="pb-3 font-medium">Timestamp</th>
-                    <th className="pb-3 font-medium">Type</th>
-                    <th className="pb-3 font-medium">Associated Order</th>
-                    <th className="pb-3 font-medium text-right">Movement Amount</th>
-                    <th className="pb-3 font-medium text-right">Resulting Balance</th>
-                    <th className="pb-3 font-medium">Audit Metadata</th>
+                  <tr className="bg-surface-subtle text-text-secondary font-label-sm text-label-sm uppercase tracking-wider h-9">
+                    <th className="py-2 px-3 rounded-l-md">Timestamp</th>
+                    <th className="py-2 px-3">Transaction Description</th>
+                    <th className="py-2 px-3">Category</th>
+                    <th className="py-2 px-3 text-right">Amount</th>
+                    <th className="py-2 px-3 text-right rounded-r-md">Ending Balance</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
+                <tbody className="divide-y divide-surface-container-low">
                   {ledger.map((entry) => {
-                    const isCredit = entry.amount >= 0;
+                    const amt = toNum(entry.amount);
+                    const isCredit = amt >= 0;
+
                     return (
-                      <tr key={entry.id} className="hover:bg-slate-800/30 transition">
-                        <td className="py-3 font-mono text-slate-400">#{entry.id}</td>
-                        <td className="py-3 text-slate-400">{new Date(entry.created_at).toLocaleString()}</td>
-                        <td className="py-3">
-                          <span
-                            className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                              entry.entry_type === 'DEPOSIT'
-                                ? 'bg-blue-500/20 text-blue-400'
-                                : entry.entry_type === 'ORDER_BUY'
-                                ? 'bg-amber-500/20 text-amber-400'
-                                : entry.entry_type === 'ORDER_SELL'
-                                ? 'bg-emerald-500/20 text-emerald-400'
-                                : 'bg-slate-800 text-slate-400'
-                            }`}
-                          >
+                      <tr key={entry.id} className="hover:bg-surface-subtle/50 transition-colors">
+                        <td className="py-3 px-3 text-text-secondary text-xs font-mono">
+                          {new Date(entry.created_at).toLocaleString()}
+                        </td>
+                        <td className="py-3 px-3 text-text-primary font-medium">
+                          {entry.metadata_json || `${entry.entry_type} (Order #${entry.order_id || 'system'})`}
+                        </td>
+                        <td className="py-3 px-3">
+                          <span className="px-2 py-0.5 rounded text-[11px] font-mono uppercase bg-surface-container text-on-surface">
                             {entry.entry_type}
                           </span>
                         </td>
-                        <td className="py-3 font-mono text-slate-400">
-                          {entry.order_id ? `#${entry.order_id}` : '—'}
+                        <td className={`py-3 px-3 text-right font-numeric-sm font-semibold [font-feature-settings:'tnum'] ${
+                          isCredit ? 'text-market-up' : 'text-market-down'
+                        }`}>
+                          {isCredit ? '+' : ''}{fmtMoney(amt)}
                         </td>
-                        <td
-                          className={`py-3 text-right font-bold ${
-                            isCredit ? 'text-emerald-400' : 'text-rose-400'
-                          }`}
-                        >
-                          {isCredit ? '+' : ''}₹{entry.amount.toFixed(2)}
-                        </td>
-                        <td className="py-3 text-right font-semibold text-white">
-                          ₹{entry.resulting_balance.toFixed(2)}
-                        </td>
-                        <td className="py-3 text-slate-400 font-mono text-[11px] truncate max-w-xs">
-                          {entry.metadata_json || '—'}
+                        <td className="py-3 px-3 text-right font-numeric-sm [font-feature-settings:'tnum'] text-text-primary font-medium">
+                          {fmtMoney(toNum(entry.resulting_balance))}
                         </td>
                       </tr>
                     );
@@ -237,10 +239,19 @@ export const OrdersHistoryPage: React.FC = () => {
               </table>
             </div>
           ) : (
-            <div className="py-16 text-center text-slate-500 text-xs">No ledger entries recorded yet.</div>
-          )
-        )}
-      </div>
+            <div className="py-12 text-center text-text-secondary">
+              <span className="material-symbols-outlined text-[32px] text-text-tertiary mb-2 block">
+                account_balance_wallet
+              </span>
+              <p className="font-semibold text-text-primary">No ledger entries recorded</p>
+              <p className="text-xs text-text-secondary mt-1">
+                Cash transactions and fee debits will be journaled in an append-only sequence.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
+export default OrdersHistoryPage;

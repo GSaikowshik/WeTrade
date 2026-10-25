@@ -1,34 +1,50 @@
 import React, { useState, useId } from 'react';
-import { Asset, OrderSide, OrderType, Order } from '../types';
+import { Asset, OrderSide, OrderType, Order, PortfolioSummary } from '../types';
 import { api } from '../api/client';
-import { AlertCircle, CheckCircle, Info, X } from 'lucide-react';
+import { toNum, fmtMoney } from '../utils/format';
 
 interface OrderTicketProps {
   asset: Asset;
-  availableCash: number;
-  availablePositionQty: number;
+  availableCash?: number;
+  availablePositionQty?: number;
+  portfolio?: PortfolioSummary | null;
   onClose: () => void;
-  onOrderSuccess: (order: Order) => void;
+  onOrderSuccess?: (order: Order) => void;
+  onOrderSubmitted?: () => void;
+  onOpenAuth?: () => void;
 }
 
 export const OrderTicket: React.FC<OrderTicketProps> = ({
   asset,
-  availableCash,
-  availablePositionQty,
+  availableCash: propCash,
+  availablePositionQty: propQty,
+  portfolio,
   onClose,
   onOrderSuccess,
+  onOrderSubmitted,
+  onOpenAuth,
 }) => {
   const [side, setSide] = useState<OrderSide>('BUY');
   const [orderType, setOrderType] = useState<OrderType>('MARKET');
   const [quantity, setQuantity] = useState<number>(1);
-  const [limitPrice, setLimitPrice] = useState<number>(asset.current_price);
+  const [limitPrice, setLimitPrice] = useState<number>(toNum(asset.current_price));
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<Order | null>(null);
   const idempotencyPrefix = useId();
 
-  // Price used for estimation
-  const estPrice = orderType === 'LIMIT' ? limitPrice : asset.current_price;
+  // Derive cash and owned shares
+  const availableCash = propCash !== undefined
+    ? propCash
+    : toNum(portfolio?.available_cash) || 100000;
+
+  const position = portfolio?.positions?.find(p => p.asset_id === asset.id || p.symbol === asset.symbol);
+  const availablePositionQty = propQty !== undefined
+    ? propQty
+    : (position?.quantity || 0);
+
+  const currentPrice = toNum(asset.current_price);
+  const estPrice = orderType === 'LIMIT' ? limitPrice : currentPrice;
   const estimatedNotional = (quantity || 0) * (estPrice || 0);
 
   // Fee calculation estimation: min(20, 0.03%) + 0.05%
@@ -48,6 +64,14 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
     setLoading(true);
 
     try {
+      if (!api.getToken()) {
+        if (onOpenAuth) {
+          onClose();
+          onOpenAuth();
+          return;
+        }
+      }
+
       const order = await api.submitOrder({
         asset_id: asset.id,
         side,
@@ -61,7 +85,8 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
         setError(order.rejection_reason || 'Order was rejected by the simulation engine.');
       } else {
         setSuccess(order);
-        onOrderSuccess(order);
+        if (onOrderSuccess) onOrderSuccess(order);
+        if (onOrderSubmitted) onOrderSubmitted();
       }
     } catch (err: any) {
       setError(err.message || 'Failed to submit simulated order.');
@@ -71,38 +96,44 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-150">
+      <div className="bg-surface-card border border-border-subtle rounded-2xl w-full max-w-md overflow-hidden shadow-xl">
         {/* Header */}
-        <div className="p-5 border-b border-slate-800 flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-white text-lg">{asset.symbol}</span>
-              <span className="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-300 font-medium">
-                {asset.exchange}
-              </span>
+        <div className="p-4 border-b border-border-subtle flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded bg-surface-container-high flex items-center justify-center font-bold text-xs text-text-primary">
+              {asset.symbol.slice(0, 2)}
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">{asset.name}</p>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-semibold text-text-primary text-base">{asset.symbol}</span>
+                <span className="text-[11px] bg-surface-container-low px-1.5 py-0.5 rounded text-text-secondary font-medium uppercase">
+                  {asset.exchange}
+                </span>
+              </div>
+              <p className="text-xs text-text-secondary">{asset.name}</p>
+            </div>
           </div>
           <button
+            type="button"
             onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition"
+            className="text-text-secondary hover:text-text-primary p-1 rounded-lg hover:bg-surface-subtle transition"
           >
-            <X className="w-5 h-5" />
+            <span className="material-symbols-outlined text-[20px]">close</span>
           </button>
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-5 space-y-4">
+        <form onSubmit={handleSubmit} className="p-5 space-y-4 font-body-md text-body-md">
           {/* Side Tabs: BUY / SELL */}
-          <div className="grid grid-cols-2 gap-2 p-1 bg-slate-950 rounded-xl border border-slate-800">
+          <div className="grid grid-cols-2 gap-2 p-1 bg-surface-subtle rounded-xl">
             <button
               type="button"
               onClick={() => setSide('BUY')}
-              className={`py-2 text-sm font-semibold rounded-lg transition-all ${
+              className={`py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                 side === 'BUY'
-                  ? 'bg-emerald-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-primary text-on-primary shadow-xs'
+                  : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               Buy
@@ -110,10 +141,10 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
             <button
               type="button"
               onClick={() => setSide('SELL')}
-              className={`py-2 text-sm font-semibold rounded-lg transition-all ${
+              className={`py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                 side === 'SELL'
-                  ? 'bg-rose-600 text-white shadow-md'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-market-down text-white shadow-xs'
+                  : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               Sell
@@ -121,26 +152,26 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
           </div>
 
           {/* Available balances context */}
-          <div className="flex justify-between items-center text-xs text-slate-400 px-1">
+          <div className="flex justify-between items-center text-xs text-text-secondary px-1">
             <span>
-              Available Cash: <strong className="text-slate-200">₹{availableCash.toLocaleString('en-IN', { maximumFractionDigits: 2 })}</strong>
+              Available Cash: <strong className="text-text-primary">{fmtMoney(availableCash)}</strong>
             </span>
             <span>
-              Owned: <strong className="text-slate-200">{availablePositionQty} shares</strong>
+              Owned: <strong className="text-text-primary">{availablePositionQty} shares</strong>
             </span>
           </div>
 
           {/* Order Type Toggle */}
           <div className="space-y-1.5">
-            <label className="text-xs font-medium text-slate-300">Order Type</label>
+            <label className="text-xs font-medium text-text-primary">Order Execution Type</label>
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setOrderType('MARKET')}
-                className={`py-2 px-3 text-xs font-medium rounded-lg border text-center transition ${
+                className={`py-2 px-3 text-xs font-medium rounded-lg border text-center transition cursor-pointer ${
                   orderType === 'MARKET'
-                    ? 'border-blue-500 bg-blue-500/10 text-blue-400'
-                    : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700'
+                    ? 'border-primary bg-primary/10 text-primary font-semibold'
+                    : 'border-border-subtle bg-surface-subtle text-text-secondary hover:text-text-primary'
                 }`}
               >
                 Market (Immediate)
@@ -148,10 +179,10 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
               <button
                 type="button"
                 onClick={() => setOrderType('LIMIT')}
-                className={`py-2 px-3 text-xs font-medium rounded-lg border text-center transition ${
+                className={`py-2 px-3 text-xs font-medium rounded-lg border text-center transition cursor-pointer ${
                   orderType === 'LIMIT'
-                    ? 'border-blue-500 bg-blue-500/10 text-blue-400'
-                    : 'border-slate-800 bg-slate-950 text-slate-400 hover:border-slate-700'
+                    ? 'border-primary bg-primary/10 text-primary font-semibold'
+                    : 'border-border-subtle bg-surface-subtle text-text-secondary hover:text-text-primary'
                 }`}
               >
                 Limit (Target Price)
@@ -161,13 +192,13 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
 
           {/* Quantity Input */}
           <div className="space-y-1.5">
-            <div className="flex justify-between text-xs font-medium text-slate-300">
+            <div className="flex justify-between text-xs font-medium text-text-primary">
               <label>Quantity (Shares)</label>
               {side === 'SELL' && availablePositionQty > 0 && (
                 <button
                   type="button"
                   onClick={() => setQuantity(availablePositionQty)}
-                  className="text-blue-400 hover:underline"
+                  className="text-primary hover:underline cursor-pointer"
                 >
                   Max ({availablePositionQty})
                 </button>
@@ -179,7 +210,7 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
               step="1"
               value={quantity}
               onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-              className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white font-medium focus:outline-none focus:border-blue-500"
+              className="w-full bg-surface-subtle border border-border-subtle rounded-lg px-3 py-2 text-text-primary font-medium focus:outline-none focus:ring-1 focus:ring-primary"
               required
             />
           </div>
@@ -187,64 +218,61 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
           {/* Limit Price Input if LIMIT */}
           {orderType === 'LIMIT' && (
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-slate-300">Limit Price (₹)</label>
+              <label className="text-xs font-medium text-text-primary">Limit Price (₹)</label>
               <input
                 type="number"
                 min="0.05"
                 step="0.05"
                 value={limitPrice}
                 onChange={(e) => setLimitPrice(parseFloat(e.target.value) || 0)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-white font-medium focus:outline-none focus:border-blue-500"
+                className="w-full bg-surface-subtle border border-border-subtle rounded-lg px-3 py-2 text-text-primary font-medium focus:outline-none focus:ring-1 focus:ring-primary"
                 required
               />
             </div>
           )}
 
           {/* Cost & Fee Breakdown Summary */}
-          <div className="bg-slate-950/80 rounded-xl p-3 border border-slate-800/80 space-y-2 text-xs">
-            <div className="flex justify-between text-slate-400">
+          <div className="bg-surface-subtle/70 rounded-xl p-3 border border-border-subtle space-y-2 text-xs">
+            <div className="flex justify-between text-text-secondary">
               <span>Order Value</span>
-              <span className="text-slate-200 font-medium">₹{estimatedNotional.toFixed(2)}</span>
+              <span className="text-text-primary font-medium">{fmtMoney(estimatedNotional)}</span>
             </div>
-            <div className="flex justify-between text-slate-400">
+            <div className="flex justify-between text-text-secondary">
               <span className="flex items-center gap-1">
-                Estimated Fees
-                <span title="Brokerage (₹20 or 0.03%) + 0.05% statutory STT simulation">
-                  <Info className="w-3 h-3 text-slate-500 cursor-help" />
-                </span>
+                Estimated Fees (Brokerage & STT)
               </span>
-              <span className="text-slate-200 font-medium">₹{estimatedFees.toFixed(2)}</span>
+              <span className="text-text-primary font-medium">{fmtMoney(estimatedFees)}</span>
             </div>
-            <div className="pt-2 border-t border-slate-800/80 flex justify-between font-semibold">
-              <span className="text-slate-200">{side === 'BUY' ? 'Total Required Cash' : 'Est. Net Proceeds'}</span>
-              <span className={side === 'BUY' ? 'text-white text-sm' : 'text-emerald-400 text-sm'}>
-                ₹{(side === 'BUY' ? totalCost : totalProceeds).toFixed(2)}
+            <div className="pt-2 border-t border-border-subtle flex justify-between font-semibold">
+              <span className="text-text-primary">{side === 'BUY' ? 'Total Required Cash' : 'Est. Net Proceeds'}</span>
+              <span className={side === 'BUY' ? 'text-text-primary text-sm font-semibold' : 'text-market-up text-sm font-semibold'}>
+                {fmtMoney(side === 'BUY' ? totalCost : totalProceeds)}
               </span>
             </div>
           </div>
 
           {/* Simulation Disclosures */}
-          <div className="text-[11px] text-slate-500 bg-slate-800/30 p-2.5 rounded-lg border border-slate-800 flex gap-2">
-            <Info className="w-4 h-4 text-blue-400 shrink-0 mt-0.5" />
+          <div className="text-[11px] text-text-secondary bg-surface-container-low p-2.5 rounded-lg flex items-center gap-2">
+            <span className="material-symbols-outlined text-[16px] text-primary shrink-0">info</span>
             <span>
-              Simulated order. No real money or exchange order is placed. Slippage (0.05%) and statutory fees are simulated for educational fidelity.
+              Simulated order execution with realistic simulated slippage and statutory STT charges.
             </span>
           </div>
 
           {/* Error Message */}
           {error && (
-            <div className="p-3 bg-rose-500/10 border border-rose-500/30 rounded-lg flex items-center gap-2 text-xs text-rose-400">
-              <AlertCircle className="w-4 h-4 shrink-0" />
+            <div className="p-3 bg-market-down-subtle border border-market-down/20 rounded-lg flex items-center gap-2 text-xs text-market-down">
+              <span className="material-symbols-outlined text-[16px] shrink-0">error</span>
               <span>{error}</span>
             </div>
           )}
 
           {/* Success Confirmation */}
           {success && (
-            <div className="p-3 bg-emerald-500/10 border border-emerald-500/30 rounded-lg flex items-center gap-2 text-xs text-emerald-400">
-              <CheckCircle className="w-4 h-4 shrink-0" />
+            <div className="p-3 bg-market-up-subtle border border-market-up/20 rounded-lg flex items-center gap-2 text-xs text-market-up">
+              <span className="material-symbols-outlined text-[16px] shrink-0">check_circle</span>
               <span>
-                Order {success.status.toLowerCase()}! Fill price: ₹{success.average_fill_price?.toFixed(2) || 'pending'}.
+                Order {success.status.toLowerCase()}! Filled at ₹{toNum(success.average_fill_price || success.limit_price || currentPrice).toFixed(2)}.
               </span>
             </div>
           )}
@@ -254,21 +282,21 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
             <button
               type="submit"
               disabled={loading || (side === 'BUY' && !canAffordBuy) || (side === 'SELL' && !canSellQty)}
-              className={`w-full py-3 rounded-xl font-bold text-sm transition-all shadow-lg flex items-center justify-center gap-2 ${
+              className={`w-full py-2.5 rounded-lg font-semibold text-xs transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer ${
                 side === 'BUY'
-                  ? 'bg-emerald-600 hover:bg-emerald-500 text-white disabled:bg-emerald-950 disabled:text-emerald-700'
-                  : 'bg-rose-600 hover:bg-rose-500 text-white disabled:bg-rose-950 disabled:text-rose-700'
+                  ? 'bg-primary hover:bg-primary-container text-on-primary disabled:opacity-40 disabled:cursor-not-allowed'
+                  : 'bg-market-down hover:opacity-90 text-white disabled:opacity-40 disabled:cursor-not-allowed'
               }`}
             >
               {loading ? 'Processing...' : `${side === 'BUY' ? 'Buy' : 'Sell'} ${quantity} ${asset.symbol}`}
             </button>
             {side === 'BUY' && !canAffordBuy && (
-              <p className="text-[11px] text-rose-400 text-center mt-1.5">
-                Insufficient cash for this simulated buy order.
+              <p className="text-[11px] text-market-down text-center mt-1.5">
+                Insufficient virtual cash for this simulated order.
               </p>
             )}
             {side === 'SELL' && !canSellQty && (
-              <p className="text-[11px] text-rose-400 text-center mt-1.5">
+              <p className="text-[11px] text-market-down text-center mt-1.5">
                 You do not hold enough shares of {asset.symbol} to sell.
               </p>
             )}
@@ -278,4 +306,4 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
     </div>
   );
 };
-
+export default OrderTicket;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Bar } from '../types';
-import { toNum } from '../utils/format';
+import { toNum, fmtMoney } from '../utils/format';
 
 interface PriceChartProps {
   bars: Bar[];
@@ -21,7 +21,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
 
   if (!bars || bars.length === 0) {
     return (
-      <div className="h-72 w-full flex items-center justify-center bg-slate-900/50 rounded-xl border border-slate-800 text-slate-400">
+      <div className="h-72 w-full flex items-center justify-center bg-surface-card rounded-xl border border-border-subtle text-text-secondary">
         No price history available for {symbol}.
       </div>
     );
@@ -35,8 +35,8 @@ export const PriceChart: React.FC<PriceChartProps> = ({
 
   const maxVolume = Math.max(...bars.map((b) => toNum(b.volume)), 1);
 
-  const chartHeight = 260;
-  const volumeHeight = 60;
+  const chartHeight = 240;
+  const volumeHeight = 50;
   const totalHeight = chartHeight + volumeHeight;
   const chartWidth = 720;
   const paddingX = 40;
@@ -58,44 +58,45 @@ export const PriceChart: React.FC<PriceChartProps> = ({
   const barPctChange = activeOpen > 0 ? ((activeClose - activeOpen) / activeOpen) * 100 : 0;
 
   return (
-    <div className="bg-slate-900/90 rounded-xl border border-slate-800 p-5 shadow-lg">
+    <div className="bg-surface-card rounded-xl border border-border-subtle p-5 shadow-sm">
       {/* Chart Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <div>
           <div className="flex items-center gap-3">
-            <span className="text-xl font-bold text-white">{symbol}</span>
-            <span className="text-sm font-semibold text-slate-300">
-              ₹{activeClose.toLocaleString('en-IN', { minimumFractionDigits: 2 })} {currency}
+            <span className="text-xl font-bold text-text-primary">{symbol}</span>
+            <span className="text-sm font-semibold text-text-primary [font-feature-settings:'tnum']">
+              {fmtMoney(activeClose)} {currency}
             </span>
             <span
-              className={`text-xs px-2 py-0.5 rounded font-medium ${
-                isUpBar ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'
+              className={`text-xs px-2 py-0.5 rounded font-semibold ${
+                isUpBar ? 'bg-market-up-subtle text-market-up' : 'bg-market-down-subtle text-market-down'
               }`}
             >
               {isUpBar ? '+' : ''}
               {barPctChange.toFixed(2)}%
             </span>
           </div>
-          <div className="text-xs text-slate-400 mt-1 flex gap-4">
+          <div className="text-xs text-text-secondary mt-1 flex flex-wrap gap-4 font-mono">
             <span>O: ₹{activeOpen.toFixed(2)}</span>
             <span>H: ₹{activeHigh.toFixed(2)}</span>
             <span>L: ₹{activeLow.toFixed(2)}</span>
             <span>C: ₹{activeClose.toFixed(2)}</span>
             <span>Vol: {(activeVol / 1000).toFixed(1)}k</span>
-            <span className="text-slate-500">{new Date(activeBar.timestamp).toLocaleDateString()}</span>
+            <span className="text-text-tertiary">{new Date(activeBar.timestamp).toLocaleDateString()}</span>
           </div>
         </div>
 
         {/* Interval controls */}
-        <div className="flex bg-slate-800/80 rounded-lg p-1 border border-slate-700/60">
+        <div className="flex bg-surface-subtle rounded-lg p-0.5 border border-border-subtle">
           {['1D', '1H', '15m'].map((res) => (
             <button
               key={res}
+              type="button"
               onClick={() => onIntervalChange(res)}
-              className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors ${
+              className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors cursor-pointer ${
                 interval === res
-                  ? 'bg-blue-600 text-white shadow-sm'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-surface-card text-text-primary shadow-xs'
+                  : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               {res}
@@ -104,58 +105,73 @@ export const PriceChart: React.FC<PriceChartProps> = ({
         </div>
       </div>
 
-      {/* SVG Candlestick & Volume Chart */}
-      <div className="relative overflow-x-auto">
+      {/* SVG Canvas for Candles + Volume */}
+      <div className="relative w-full overflow-hidden">
         <svg
           viewBox={`0 0 ${chartWidth} ${totalHeight}`}
-          className="w-full h-auto select-none"
+          className="w-full h-auto cursor-crosshair select-none"
           onMouseLeave={() => setHoverIndex(null)}
         >
-          {/* Horizontal grid lines */}
-          {[0, 0.25, 0.5, 0.75, 1].map((pct) => {
-            const p = minPrice + priceRange * pct;
-            const y = getY(p);
+          {/* Horizontal Reference Grids */}
+          {[0, 0.25, 0.5, 0.75, 1].map((pct, idx) => {
+            const y = chartHeight - pct * (chartHeight - 40) - 20;
+            const priceLevel = minPrice + pct * priceRange;
             return (
-              <g key={pct}>
-                <line x1={paddingX} y1={y} x2={chartWidth - paddingX} y2={y} stroke="#1E293B" strokeDasharray="3 3" />
-                <text x={chartWidth - paddingX + 5} y={y + 4} fill="#64748B" fontSize="10" textAnchor="start">
-                  ₹{p.toFixed(0)}
+              <g key={idx}>
+                <line
+                  x1={paddingX}
+                  x2={chartWidth - paddingX}
+                  y1={y}
+                  y2={y}
+                  stroke="#E5E8E2"
+                  strokeDasharray="2 3"
+                  strokeWidth="1"
+                />
+                <text
+                  x={chartWidth - paddingX + 5}
+                  y={y + 3}
+                  fill="#9CA3AF"
+                  fontSize="10"
+                  fontFamily="Geist, monospace"
+                >
+                  ₹{priceLevel.toFixed(1)}
                 </text>
               </g>
             );
           })}
 
-          {/* Volume divider */}
+          {/* Volume baseline */}
           <line
             x1={paddingX}
-            y1={chartHeight}
             x2={chartWidth - paddingX}
+            y1={chartHeight}
             y2={chartHeight}
-            stroke="#1E293B"
+            stroke="#D4D4CE"
             strokeWidth="1"
           />
 
-          {/* Candlesticks and Volume Bars */}
+          {/* Candlesticks */}
           {bars.map((bar, i) => {
-            const bOpen = toNum(bar.open);
-            const bClose = toNum(bar.close);
-            const bHigh = toNum(bar.high);
-            const bLow = toNum(bar.low);
-            const bVol = toNum(bar.volume);
+            const x = paddingX + i * candleStep + candleStep / 2;
+            const o = toNum(bar.open);
+            const c = toNum(bar.close);
+            const h = toNum(bar.high);
+            const l = toNum(bar.low);
+            const vol = toNum(bar.volume);
 
-            const xCenter = paddingX + i * candleStep + candleStep / 2;
-            const isUp = bClose >= bOpen;
-            const color = isUp ? '#10B981' : '#F43F5E';
-            const yOpen = getY(bOpen);
-            const yClose = getY(bClose);
-            const yHigh = getY(bHigh);
-            const yLow = getY(bLow);
+            const isUp = c >= o;
+            const color = isUp ? '#0F766E' : '#B91C1C';
 
-            const candleTop = Math.min(yOpen, yClose);
-            const candleBodyHeight = Math.max(Math.abs(yClose - yOpen), 2);
+            const yHigh = getY(h);
+            const yLow = getY(l);
+            const yOpen = getY(o);
+            const yClose = getY(c);
+
+            const bodyTop = Math.min(yOpen, yClose);
+            const bodyHeight = Math.max(Math.abs(yClose - yOpen), 1.5);
 
             // Volume bar
-            const volBarHeight = (bVol / maxVolume) * (volumeHeight - 15);
+            const volBarHeight = (vol / maxVolume) * (volumeHeight - 10);
             const volY = totalHeight - volBarHeight;
 
             const isHovered = hoverIndex === i;
@@ -163,39 +179,50 @@ export const PriceChart: React.FC<PriceChartProps> = ({
             return (
               <g
                 key={i}
-                className="cursor-pointer"
                 onMouseEnter={() => setHoverIndex(i)}
+                className="cursor-pointer"
               >
                 {/* Wick */}
-                <line x1={xCenter} y1={yHigh} x2={xCenter} y2={yLow} stroke={color} strokeWidth="1.5" />
-                {/* Body */}
+                <line
+                  x1={x}
+                  x2={x}
+                  y1={yHigh}
+                  y2={yLow}
+                  stroke={color}
+                  strokeWidth={isHovered ? '2' : '1.2'}
+                />
+
+                {/* Candle Body */}
                 <rect
-                  x={xCenter - candleWidth / 2}
-                  y={candleTop}
+                  x={x - candleWidth / 2}
+                  y={bodyTop}
                   width={candleWidth}
-                  height={candleBodyHeight}
-                  fill={color}
+                  height={bodyHeight}
+                  fill={isUp ? '#0F766E' : '#B91C1C'}
                   rx="1"
                 />
-                {/* Volume bar */}
+
+                {/* Volume Bar */}
                 <rect
-                  x={xCenter - candleWidth / 2}
+                  x={x - candleWidth / 2}
                   y={volY}
                   width={candleWidth}
                   height={volBarHeight}
-                  fill={isUp ? '#065F46' : '#881337'}
-                  opacity={isHovered ? 0.9 : 0.6}
+                  fill={isUp ? '#0F766E' : '#B91C1C'}
+                  opacity={isHovered ? 0.8 : 0.3}
+                  rx="1"
                 />
-                {/* Hover indicator crosshair */}
+
+                {/* Vertical hover line indicator */}
                 {isHovered && (
                   <line
-                    x1={xCenter}
-                    y1={10}
-                    x2={xCenter}
+                    x1={x}
+                    x2={x}
+                    y1={0}
                     y2={totalHeight}
-                    stroke="#94A3B8"
-                    strokeWidth="1"
+                    stroke="#707973"
                     strokeDasharray="2 2"
+                    strokeWidth="1"
                   />
                 )}
               </g>
@@ -204,11 +231,10 @@ export const PriceChart: React.FC<PriceChartProps> = ({
         </svg>
       </div>
 
-      <div className="mt-2 flex items-center justify-between text-xs text-slate-500">
-        <span>Source: We Trade Seeded Feed (Demo)</span>
-        <span>Simulated intraday resolution: {interval}</span>
+      <div className="mt-2 text-right text-[11px] text-text-tertiary">
+        Hover over candle sticks to inspect tick metrics. Real-time simulated feed (We Trade Seeded Feed).
       </div>
     </div>
   );
 };
-
+export default PriceChart;

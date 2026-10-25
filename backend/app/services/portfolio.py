@@ -78,7 +78,7 @@ def get_portfolio_summary(db: Session, account: Account) -> PortfolioSummaryOut:
             "percentage": float(cash_pct)
         })
         for p_out in position_outs:
-            pct = round_money((p_out.market_value / total_val) * Decimal("100.0"))
+            pct = round_money((Decimal(str(p_out.market_value)) / total_val) * Decimal("100.0"))
             allocations.append({
                 "symbol": p_out.symbol,
                 "name": p_out.name,

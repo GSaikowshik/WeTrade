@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { PortfolioSummary, Asset } from '../types';
-import { PieChart, Layers } from 'lucide-react';
 import { OrderTicket } from '../components/OrderTicket';
-import { toNum } from '../utils/format';
+import { toNum, fmtMoney } from '../utils/format';
 
 interface PortfolioPageProps {
   portfolio: PortfolioSummary | null;
@@ -31,116 +30,155 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-white">Virtual Portfolio</h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Track holdings, average cost basis, market valuation, and P&L calculations.
+        <div className="flex items-center gap-2 mb-1">
+          <span className="font-label-sm text-label-sm text-primary uppercase font-semibold tracking-wider">
+            Portfolio
+          </span>
+          <span className="text-text-tertiary">/</span>
+          <span className="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider">
+            Virtual Valuation
+          </span>
+        </div>
+        <h1 className="font-headline-lg text-headline-lg text-text-primary">Virtual Portfolio</h1>
+        <p className="font-body-sm text-body-sm text-text-secondary mt-1">
+          Track open holdings, average cost basis, market valuation, and P&L calculations.
         </p>
       </div>
 
       {/* Metric Cards Banner */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Portfolio Value */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm">
-          <span className="text-xs text-slate-400 block mb-1">Total Valuation</span>
-          <div className="text-2xl font-bold text-white">
-            ₹{totalValue.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        <div className="bg-surface-card border border-border-subtle rounded-xl p-5 shadow-sm">
+          <span className="text-xs text-text-secondary block mb-1 uppercase tracking-wider font-label-sm">
+            Total Valuation
+          </span>
+          <div className="font-numeric-lg text-numeric-lg text-text-primary font-semibold [font-feature-settings:'tnum']">
+            {fmtMoney(totalValue)}
           </div>
-          <div className="text-xs text-slate-500 mt-2">Cash + Open Positions</div>
+          <div className="text-xs text-text-tertiary mt-2">Cash + Open Positions</div>
         </div>
 
         {/* Available Virtual Cash */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm">
-          <span className="text-xs text-slate-400 block mb-1">Available Practice Funds</span>
-          <div className="text-2xl font-bold text-emerald-400">
-            ₹{cash.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+        <div className="bg-surface-card border border-border-subtle rounded-xl p-5 shadow-sm">
+          <span className="text-xs text-text-secondary block mb-1 uppercase tracking-wider font-label-sm">
+            Available Virtual Cash
+          </span>
+          <div className="font-numeric-lg text-numeric-lg text-primary font-semibold [font-feature-settings:'tnum']">
+            {fmtMoney(cash)}
           </div>
-          <div className="text-xs text-slate-500 mt-2">
+          <div className="text-xs text-text-secondary mt-2">
             {((cash / (totalValue || 1)) * 100).toFixed(1)}% cash allocation
           </div>
         </div>
 
         {/* Unrealized P&L */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm">
-          <span className="text-xs text-slate-400 block mb-1">Unrealized P&L</span>
-          <div className={`text-2xl font-bold ${isUnrealizedUp ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {isUnrealizedUp ? '+' : ''}₹{unrealized.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+        <div className="bg-surface-card border border-border-subtle rounded-xl p-5 shadow-sm">
+          <span className="text-xs text-text-secondary block mb-1 uppercase tracking-wider font-label-sm">
+            Unrealized P&L
+          </span>
+          <div className={`font-numeric-lg text-numeric-lg font-semibold [font-feature-settings:'tnum'] ${
+            isUnrealizedUp ? 'text-market-up' : 'text-market-down'
+          }`}>
+            {isUnrealizedUp ? '+' : ''}{fmtMoney(unrealized)}
           </div>
-          <div className={`text-xs mt-2 font-semibold ${isUnrealizedUp ? 'text-emerald-400' : 'text-rose-400'}`}>
+          <div className={`text-xs mt-2 font-medium [font-feature-settings:'tnum'] ${
+            isUnrealizedUp ? 'text-market-up' : 'text-market-down'
+          }`}>
             {isUnrealizedUp ? '+' : ''}{unrealizedPct.toFixed(2)}% open gain
           </div>
         </div>
 
         {/* Realized P&L & Fees */}
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm">
-          <span className="text-xs text-slate-400 block mb-1">Realized Net P&L</span>
-          <div className={`text-2xl font-bold ${isRealizedUp ? 'text-emerald-400' : 'text-rose-400'}`}>
-            {isRealizedUp ? '+' : ''}₹{realized.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+        <div className="bg-surface-card border border-border-subtle rounded-xl p-5 shadow-sm">
+          <span className="text-xs text-text-secondary block mb-1 uppercase tracking-wider font-label-sm">
+            Realized Net P&L
+          </span>
+          <div className={`font-numeric-lg text-numeric-lg font-semibold [font-feature-settings:'tnum'] ${
+            isRealizedUp ? 'text-market-up' : 'text-market-down'
+          }`}>
+            {isRealizedUp ? '+' : ''}{fmtMoney(realized)}
           </div>
-          <div className="text-xs text-slate-500 mt-2">Total Fees Paid: ₹{fees.toFixed(2)}</div>
+          <div className="text-xs text-text-tertiary mt-2">Total Fees Paid: {fmtMoney(fees)}</div>
         </div>
       </div>
 
       {/* Open Positions Table */}
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm">
+      <div className="bg-surface-card border border-border-subtle rounded-xl p-5 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-base font-bold text-white">Open Holdings & Cost Basis</h2>
-            <p className="text-xs text-slate-400">
+            <h2 className="font-headline-sm text-headline-sm text-text-primary">
+              Open Holdings & Cost Basis
+            </h2>
+            <p className="font-body-sm text-body-sm text-text-secondary">
               Positions updated with weighted average cost accounting formula
             </p>
           </div>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300">
+          <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-surface-container text-on-surface">
             {portfolio?.positions?.length ?? 0} Active Positions
           </span>
         </div>
 
         {portfolio?.positions && portfolio.positions.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+            <table className="w-full text-left font-body-sm text-body-sm">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-400">
-                  <th className="pb-3 font-medium">Asset</th>
-                  <th className="pb-3 font-medium text-right">Quantity</th>
-                  <th className="pb-3 font-medium text-right">Avg Buy Price</th>
-                  <th className="pb-3 font-medium text-right">Cost Basis</th>
-                  <th className="pb-3 font-medium text-right">Current Price</th>
-                  <th className="pb-3 font-medium text-right">Market Value</th>
-                  <th className="pb-3 font-medium text-right">Unrealized P&L</th>
-                  <th className="pb-3 font-medium text-right">Action</th>
+                <tr className="bg-surface-subtle text-text-secondary font-label-sm text-label-sm uppercase tracking-wider h-9">
+                  <th className="py-2 px-3 rounded-l-md">Symbol</th>
+                  <th className="py-2 px-3 text-right">Shares</th>
+                  <th className="py-2 px-3 text-right">Avg Cost</th>
+                  <th className="py-2 px-3 text-right">Current Price</th>
+                  <th className="py-2 px-3 text-right">Market Value</th>
+                  <th className="py-2 px-3 text-right">Unrealized P&L</th>
+                  <th className="py-2 px-3 text-right rounded-r-md">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60">
+              <tbody className="divide-y divide-surface-container-low">
                 {portfolio.positions.map((pos) => {
-                  const posUnrealized = toNum(pos.unrealized_pnl);
-                  const posReturnPct = toNum(pos.unrealized_return_pct);
-                  const isUp = posUnrealized >= 0;
-                  const matchedAsset = assets.find((a) => a.id === pos.asset_id);
+                  const pnl = toNum(pos.unrealized_pnl);
+                  const pnlPct = toNum(pos.unrealized_return_pct);
+                  const isUp = pnl >= 0;
+                  const matchingAsset = assets.find((a) => a.id === pos.asset_id || a.symbol === pos.symbol);
+
                   return (
-                    <tr key={pos.id} className="hover:bg-slate-800/30 transition">
-                      <td className="py-3">
-                        <div className="font-bold text-white text-sm">{pos.symbol}</div>
-                        <div className="text-[10px] text-slate-500">{pos.name}</div>
+                    <tr key={pos.id} className="hover:bg-surface-subtle/50 transition-colors">
+                      <td className="py-3 px-3">
+                        <div className="font-semibold text-text-primary font-numeric-sm">{pos.symbol}</div>
+                        <div className="text-[11px] text-text-secondary">{matchingAsset?.name || 'Equity'}</div>
                       </td>
-                      <td className="py-3 text-right font-medium text-slate-200">{toNum(pos.quantity)}</td>
-                      <td className="py-3 text-right text-slate-300">₹{toNum(pos.average_cost).toFixed(2)}</td>
-                      <td className="py-3 text-right text-slate-300">₹{toNum(pos.cost_basis).toFixed(2)}</td>
-                      <td className="py-3 text-right font-medium text-white">₹{toNum(pos.current_price).toFixed(2)}</td>
-                      <td className="py-3 text-right font-bold text-white">₹{toNum(pos.market_value).toFixed(2)}</td>
-                      <td className={`py-3 text-right font-bold ${isUp ? 'text-emerald-400' : 'text-rose-400'}`}>
-                        <div>
-                          {isUp ? '+' : ''}₹{posUnrealized.toFixed(2)}
+                      <td className="py-3 px-3 text-right font-numeric-sm [font-feature-settings:'tnum'] text-text-primary">
+                        {pos.quantity}
+                      </td>
+                      <td className="py-3 px-3 text-right font-numeric-sm [font-feature-settings:'tnum'] text-text-secondary">
+                        {fmtMoney(toNum(pos.average_cost))}
+                      </td>
+                      <td className="py-3 px-3 text-right font-numeric-sm [font-feature-settings:'tnum'] text-text-primary font-medium">
+                        {fmtMoney(toNum(pos.current_price))}
+                      </td>
+                      <td className="py-3 px-3 text-right font-numeric-sm [font-feature-settings:'tnum'] text-text-primary font-semibold">
+                        {fmtMoney(toNum(pos.market_value))}
+                      </td>
+                      <td className="py-3 px-3 text-right">
+                        <div className={`font-numeric-sm font-semibold [font-feature-settings:'tnum'] ${
+                          isUp ? 'text-market-up' : 'text-market-down'
+                        }`}>
+                          {isUp ? '+' : ''}{fmtMoney(pnl)}
                         </div>
-                        <div className="text-[10px] font-normal">
-                          {isUp ? '+' : ''}{posReturnPct.toFixed(2)}%
+                        <div className={`text-[11px] font-medium [font-feature-settings:'tnum'] ${
+                          isUp ? 'text-market-up' : 'text-market-down'
+                        }`}>
+                          {isUp ? '+' : ''}{pnlPct.toFixed(2)}%
                         </div>
                       </td>
-                      <td className="py-3 text-right">
-                        <button
-                          onClick={() => matchedAsset && setSelectedAssetForTrade(matchedAsset)}
-                          className="px-3 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition shadow-sm"
-                        >
-                          Trade
-                        </button>
+                      <td className="py-3 px-3 text-right">
+                        {matchingAsset && (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedAssetForTrade(matchingAsset)}
+                            className="px-3 py-1 rounded bg-surface-container hover:bg-primary hover:text-on-primary text-text-primary text-xs font-medium transition cursor-pointer"
+                          >
+                            Trade
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );
@@ -149,61 +187,31 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
             </table>
           </div>
         ) : (
-          <div className="py-16 text-center text-slate-500 text-xs">
-            <Layers className="w-8 h-8 text-slate-600 mx-auto mb-2" />
-            <p>You currently hold no virtual equity positions.</p>
-            <p className="text-slate-600 mt-1">Open positions to track real-time market value and returns.</p>
+          <div className="py-12 text-center text-text-secondary">
+            <span className="material-symbols-outlined text-[32px] text-text-tertiary mb-2 block">
+              pie_chart
+            </span>
+            <p className="font-semibold text-text-primary">No open holdings yet</p>
+            <p className="text-xs text-text-secondary mt-1">
+              Execute simulated buy orders from the Markets desk to build your portfolio.
+            </p>
           </div>
         )}
       </div>
 
-      {/* Asset Allocation Breakdown */}
-      {portfolio?.allocations && portfolio.allocations.length > 0 && (
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-4">
-          <div className="flex items-center gap-2">
-            <PieChart className="w-5 h-5 text-blue-400" />
-            <div>
-              <h2 className="text-base font-bold text-white">Portfolio Allocation</h2>
-              <p className="text-xs text-slate-400">Distribution across cash and active holdings</p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {portfolio.allocations.map((alloc) => (
-              <div
-                key={alloc.symbol}
-                className="bg-slate-950 p-3 rounded-xl border border-slate-800/80 flex items-center justify-between"
-              >
-                <div>
-                  <div className="font-bold text-white text-xs">{alloc.symbol}</div>
-                  <div className="text-[10px] text-slate-500 truncate max-w-[120px]">{alloc.name}</div>
-                </div>
-                <div className="text-right">
-                  <div className="font-semibold text-white text-xs">
-                    ₹{alloc.market_value.toLocaleString('en-IN', { maximumFractionDigits: 0 })}
-                  </div>
-                  <div className="text-[10px] text-blue-400 font-bold">{alloc.percentage.toFixed(1)}%</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Order Ticket Modal */}
+      {/* Trade Modal */}
       {selectedAssetForTrade && (
         <OrderTicket
           asset={selectedAssetForTrade}
-          availableCash={portfolio?.available_cash ?? 100000}
-          availablePositionQty={
-            portfolio?.positions?.find((p) => p.asset_id === selectedAssetForTrade.id)?.quantity ?? 0
-          }
+          portfolio={portfolio}
           onClose={() => setSelectedAssetForTrade(null)}
-          onOrderSuccess={() => {
+          onOrderSubmitted={() => {
             onRefreshPortfolio();
+            setSelectedAssetForTrade(null);
           }}
         />
       )}
     </div>
   );
 };
+export default PortfolioPage;

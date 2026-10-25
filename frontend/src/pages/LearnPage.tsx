@@ -1,11 +1,10 @@
 import React from 'react';
-import { HelpCircle, CheckCircle, AlertTriangle, ShieldCheck, TrendingUp } from 'lucide-react';
 
 export const LearnPage: React.FC = () => {
   const topics = [
     {
       title: 'Market Orders vs. Limit Orders',
-      icon: TrendingUp,
+      icon: 'trending_up',
       content: [
         'A Market Order executes immediately at the best available current market price. It guarantees fill speed, but not exact price (subject to slippage).',
         'A Limit Order lets you specify the maximum price you are willing to pay (on a buy) or the minimum price you are willing to receive (on a sell). It only fills if the market reaches your target price.',
@@ -14,7 +13,7 @@ export const LearnPage: React.FC = () => {
     },
     {
       title: 'Realized vs. Unrealized Profit & Loss (P&L)',
-      icon: CheckCircle,
+      icon: 'check_circle',
       content: [
         'Unrealized P&L (Paper Profit): The difference between what you paid (cost basis) and what your open positions are currently worth at the latest market price. This profit is not locked in until you sell.',
         'Realized P&L (Booked Profit): The net profit or loss generated after you exit a position, calculated as: Sale Proceeds minus Cost Basis minus Applicable Fees.',
@@ -23,7 +22,7 @@ export const LearnPage: React.FC = () => {
     },
     {
       title: 'Bid, Ask, Spread, and Liquidity',
-      icon: HelpCircle,
+      icon: 'tune',
       content: [
         'The Bid is the highest price buyers are currently offering.',
         'The Ask is the lowest price sellers are currently requesting.',
@@ -32,7 +31,7 @@ export const LearnPage: React.FC = () => {
     },
     {
       title: 'Fees, Slippage, and Frictions',
-      icon: AlertTriangle,
+      icon: 'warning',
       content: [
         'In real trading, trading is not free: brokerage, exchange turnover fees, Securities Transaction Tax (STT), and regulatory charges reduce your net returns.',
         'We Trade models these costs explicitly: ₹20 (or 0.03%) flat brokerage plus 0.05% statutory turnover charges, deducted atomically from your virtual cash balance upon fill.',
@@ -41,7 +40,7 @@ export const LearnPage: React.FC = () => {
     },
     {
       title: 'Simulation Invariants & Non-Brokerage Disclosure',
-      icon: ShieldCheck,
+      icon: 'verified_user',
       content: [
         'We Trade is strictly an educational practice tool. All funds, balances, order fills, and portfolios are virtual simulations.',
         'No real exchange connections, payment gateways, or live money deposits are supported or promised.',
@@ -53,37 +52,46 @@ export const LearnPage: React.FC = () => {
   return (
     <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-200">
       <div>
-        <h1 className="text-2xl font-bold text-white">Market Learning Guide</h1>
-        <p className="text-xs text-slate-400 mt-1">
-          Master the fundamentals of order execution, risk accounting, and market mechanics.
+        <div className="flex items-center gap-2 mb-1">
+          <span className="font-label-sm text-label-sm text-primary uppercase font-semibold tracking-wider">
+            Academy
+          </span>
+          <span className="text-text-tertiary">/</span>
+          <span className="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider">
+            Curriculum
+          </span>
+        </div>
+        <h1 className="font-headline-lg text-headline-lg text-text-primary">We Trade Academy</h1>
+        <p className="font-body-sm text-body-sm text-text-secondary mt-1">
+          Master the fundamentals of order execution, risk accounting, and market mechanics before risking capital.
         </p>
       </div>
 
       <div className="space-y-4">
-        {topics.map((topic, idx) => {
-          const Icon = topic.icon;
-          return (
-            <div
-              key={idx}
-              className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-sm space-y-3"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-600/20 text-blue-400 flex items-center justify-center">
-                  <Icon className="w-4 h-4" />
-                </div>
-                <h2 className="text-base font-bold text-white">{topic.title}</h2>
+        {topics.map((t, idx) => (
+          <div
+            key={idx}
+            className="bg-surface-card border border-border-subtle rounded-xl p-5 shadow-sm space-y-3"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+                <span className="material-symbols-outlined text-[20px]">{t.icon}</span>
               </div>
-              <ul className="space-y-2 text-xs text-slate-300 pl-11">
-                {topic.content.map((point, pIdx) => (
-                  <li key={pIdx} className="leading-relaxed list-disc">
-                    {point}
-                  </li>
-                ))}
-              </ul>
+              <h2 className="font-headline-sm text-headline-sm text-text-primary">{t.title}</h2>
             </div>
-          );
-        })}
+
+            <div className="space-y-2 pt-1 font-body-sm text-body-sm text-text-secondary leading-relaxed pl-11">
+              {t.content.map((point, pIdx) => (
+                <div key={pIdx} className="flex items-start gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                  <p>{point}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 };
+export default LearnPage;

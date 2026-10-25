@@ -64,63 +64,57 @@ export const App: React.FC = () => {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen flex flex-col bg-[#0A0E17] text-slate-100 font-sans">
+      <div className="min-h-screen bg-surface font-body-md text-body-md text-on-surface antialiased">
         <Navbar
           user={user}
           portfolio={portfolio}
           onLogout={handleLogout}
           onOpenAuth={() => setShowAuthModal(true)}
+          onResetSimulation={() => {
+            refreshPortfolio();
+          }}
         />
 
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <Dashboard
-                  user={user}
-                  portfolio={portfolio}
-                  onRefreshPortfolio={refreshPortfolio}
-                  onOpenAuth={() => setShowAuthModal(true)}
-                />
-              }
-            />
-            <Route
-              path="/markets"
-              element={
-                <Markets
-                  portfolio={portfolio}
-                  onRefreshPortfolio={refreshPortfolio}
-                />
-              }
-            />
-            <Route
-              path="/portfolio"
-              element={
-                <PortfolioPage
-                  portfolio={portfolio}
-                  assets={assets}
-                  onRefreshPortfolio={refreshPortfolio}
-                />
-              }
-            />
-            <Route path="/orders" element={<OrdersHistoryPage />} />
-            <Route path="/journal" element={<TradeJournalPage assets={assets} />} />
-            <Route path="/learn" element={<LearnPage />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </main>
-
-        <footer className="border-t border-slate-800/80 py-6 text-center text-xs text-slate-500 bg-[#0B0F17]">
-          <div className="max-w-7xl mx-auto px-4 space-y-1">
-            <p>
-              We Trade &copy; {new Date().getFullYear()} — Educational Paper Trading Platform. Built with React, TypeScript & FastAPI.
-            </p>
-            <p className="text-[11px] text-slate-600">
-              Virtual simulated funds only. Not registered with SEBI or any regulatory agency. No real investments or returns.
-            </p>
-          </div>
-        </footer>
+        <div className="md:pl-60">
+          <main className="relative pt-14 w-full px-space-lg bg-surface">
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <Dashboard
+                    user={user}
+                    portfolio={portfolio}
+                    onRefreshPortfolio={refreshPortfolio}
+                    onOpenAuth={() => setShowAuthModal(true)}
+                  />
+                }
+              />
+              <Route
+                path="/markets"
+                element={
+                  <Markets
+                    portfolio={portfolio}
+                    onRefreshPortfolio={refreshPortfolio}
+                  />
+                }
+              />
+              <Route
+                path="/portfolio"
+                element={
+                  <PortfolioPage
+                    portfolio={portfolio}
+                    assets={assets}
+                    onRefreshPortfolio={refreshPortfolio}
+                  />
+                }
+              />
+              <Route path="/orders" element={<OrdersHistoryPage />} />
+              <Route path="/journal" element={<TradeJournalPage assets={assets} />} />
+              <Route path="/learn" element={<LearnPage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </main>
+        </div>
 
         {showAuthModal && (
           <AuthModal
@@ -134,3 +128,4 @@ export const App: React.FC = () => {
     </BrowserRouter>
   );
 };
+export default App;

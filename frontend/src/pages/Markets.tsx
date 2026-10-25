@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Star, TrendingUp } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { Asset, Bar, PortfolioSummary } from '../types';
 import { api } from '../api/client';
 import { PriceChart } from '../components/PriceChart';
 import { OrderTicket } from '../components/OrderTicket';
-import { toNum } from '../utils/format';
+import { toNum, fmtMoney } from '../utils/format';
 
 interface MarketsProps {
   portfolio: PortfolioSummary | null;
@@ -12,6 +12,7 @@ interface MarketsProps {
 }
 
 export const Markets: React.FC<MarketsProps> = ({ portfolio, onRefreshPortfolio }) => {
+  const location = useLocation();
   const [assets, setAssets] = useState<Asset[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
@@ -25,6 +26,15 @@ export const Markets: React.FC<MarketsProps> = ({ portfolio, onRefreshPortfolio 
     loadAssets();
     loadWatchlist();
   }, []);
+
+  useEffect(() => {
+    // Check URL query param ?search=...
+    const params = new URLSearchParams(location.search);
+    const searchParam = params.get('search');
+    if (searchParam) {
+      setSearchQuery(searchParam);
+    }
+  }, [location.search]);
 
   useEffect(() => {
     if (selectedAsset) {
@@ -90,21 +100,32 @@ export const Markets: React.FC<MarketsProps> = ({ portfolio, onRefreshPortfolio 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white">Indian Equity Markets</h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-label-sm text-label-sm text-primary uppercase font-semibold tracking-wider">
+              Markets
+            </span>
+            <span className="text-text-tertiary">/</span>
+            <span className="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider">
+              NSE Equities
+            </span>
+          </div>
+          <h1 className="font-headline-lg text-headline-lg text-text-primary">Indian Equity Markets</h1>
+          <p className="font-body-sm text-body-sm text-text-secondary mt-1">
             Simulated quotes & historical candlestick charts for top NSE equities.
           </p>
         </div>
 
         {/* Search Input */}
         <div className="relative w-full sm:w-72">
-          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+          <span className="material-symbols-outlined absolute left-3 top-2.5 text-text-tertiary text-[18px]">
+            search
+          </span>
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search symbol (e.g. RELIANCE)..."
-            className="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-blue-500"
+            className="w-full bg-surface-card border border-border-subtle rounded-xl pl-9 pr-4 py-2 text-xs text-text-primary placeholder:text-text-tertiary focus:outline-none focus:ring-1 focus:ring-primary shadow-xs"
           />
         </div>
       </div>
@@ -124,35 +145,44 @@ export const Markets: React.FC<MarketsProps> = ({ portfolio, onRefreshPortfolio 
                 onClick={() => setSelectedAsset(asset)}
                 className={`p-4 rounded-xl border transition cursor-pointer flex items-center justify-between ${
                   isSelected
-                    ? 'bg-slate-800/90 border-blue-500 shadow-md'
-                    : 'bg-slate-900 border-slate-800 hover:border-slate-700'
+                    ? 'bg-surface-card border-primary shadow-sm ring-1 ring-primary/20'
+                    : 'bg-surface-card border-border-subtle hover:border-border-strong hover:bg-surface-subtle/50'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleWatchlist(asset.id);
                     }}
                     className={`p-1 rounded-lg transition ${
                       isWatchlisted
-                        ? 'text-amber-400 hover:text-amber-300'
-                        : 'text-slate-600 hover:text-slate-400'
+                        ? 'text-amber-500 hover:text-amber-600'
+                        : 'text-text-tertiary hover:text-text-secondary'
                     }`}
                   >
-                    <Star className={`w-4 h-4 ${isWatchlisted ? 'fill-amber-400' : ''}`} />
+                    <span className="material-symbols-outlined text-[18px]">
+                      {isWatchlisted ? 'star' : 'star_outline'}
+                    </span>
                   </button>
                   <div>
-                    <div className="font-bold text-white text-sm">{asset.symbol}</div>
-                    <div className="text-[11px] text-slate-400 truncate max-w-[150px]">{asset.name}</div>
+                    <div className="font-semibold text-text-primary text-sm font-numeric-sm">
+                      {asset.symbol}
+                    </div>
+                    <div className="text-[11px] text-text-secondary truncate max-w-[150px]">
+                      {asset.name}
+                    </div>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <div className="font-bold text-white text-sm">₹{toNum(asset.current_price).toFixed(2)}</div>
+                  <div className="font-semibold text-text-primary text-sm font-numeric-sm [font-feature-settings:'tnum']">
+                    {fmtMoney(toNum(asset.current_price))}
+                  </div>
                   <div
-                    className={`text-xs font-semibold ${
-                      isUp ? 'text-emerald-400' : 'text-rose-400'
+                    className={`text-xs font-medium [font-feature-settings:'tnum'] ${
+                      isUp ? 'text-market-up' : 'text-market-down'
                     }`}
                   >
                     {isUp ? '+' : ''}{toNum(asset.change_24h).toFixed(2)}%
@@ -167,50 +197,57 @@ export const Markets: React.FC<MarketsProps> = ({ portfolio, onRefreshPortfolio 
         {selectedAsset && (
           <div className="lg:col-span-2 space-y-5">
             {/* Asset Detail Header with Trade Actions */}
-            <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 flex flex-wrap items-center justify-between gap-4">
+            <div className="bg-surface-card border border-border-subtle rounded-xl p-5 flex flex-wrap items-center justify-between gap-4 shadow-sm">
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-extrabold text-white">{selectedAsset.symbol}</h2>
-                  <span className="text-xs bg-slate-800 px-2 py-0.5 rounded text-slate-300 font-medium">
+                  <h2 className="text-xl font-bold text-text-primary">{selectedAsset.symbol}</h2>
+                  <span className="text-xs bg-surface-container-low px-2 py-0.5 rounded text-text-secondary font-medium">
                     {selectedAsset.exchange}
                   </span>
-                  <span className="text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20 px-2 py-0.5 rounded font-mono">
+                  <span className="text-[10px] bg-market-up-subtle text-market-up px-2 py-0.5 rounded font-mono font-semibold">
                     {selectedAsset.data_status.toUpperCase()}
                   </span>
                 </div>
-                <p className="text-xs text-slate-400 mt-0.5">{selectedAsset.name}</p>
+                <p className="text-xs text-text-secondary mt-0.5">{selectedAsset.name}</p>
               </div>
 
               {/* Action Buttons */}
               <div className="flex items-center gap-2">
                 <button
+                  type="button"
                   onClick={() => setShowOrderTicket(true)}
-                  className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition shadow-lg shadow-blue-500/20 flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-medium transition shadow-sm flex items-center gap-1.5 cursor-pointer"
                 >
-                  <TrendingUp className="w-4 h-4" />
+                  <span className="material-symbols-outlined text-[16px]">trending_up</span>
                   <span>Place Simulated Order</span>
                 </button>
               </div>
             </div>
 
             {/* 24h Statistics Strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-900/60 border border-slate-800 rounded-xl p-3 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-surface-card border border-border-subtle rounded-xl p-3 text-xs shadow-sm">
               <div>
-                <span className="text-slate-500 block text-[10px]">24h High</span>
-                <span className="font-semibold text-slate-200">₹{toNum(selectedAsset.high_24h).toFixed(2)}</span>
+                <span className="text-text-secondary block text-[10px]">24h High</span>
+                <span className="font-semibold text-text-primary font-numeric-sm [font-feature-settings:'tnum']">
+                  {fmtMoney(toNum(selectedAsset.high_24h))}
+                </span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[10px]">24h Low</span>
-                <span className="font-semibold text-slate-200">₹{toNum(selectedAsset.low_24h).toFixed(2)}</span>
+                <span className="text-text-secondary block text-[10px]">24h Low</span>
+                <span className="font-semibold text-text-primary font-numeric-sm [font-feature-settings:'tnum']">
+                  {fmtMoney(toNum(selectedAsset.low_24h))}
+                </span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[10px]">24h Volume</span>
-                <span className="font-semibold text-slate-200">{(toNum(selectedAsset.volume_24h) / 1000000).toFixed(2)}M</span>
+                <span className="text-text-secondary block text-[10px]">24h Volume</span>
+                <span className="font-semibold text-text-primary font-numeric-sm [font-feature-settings:'tnum']">
+                  {(toNum(selectedAsset.volume_24h) / 1000000).toFixed(2)}M
+                </span>
               </div>
               <div>
-                <span className="text-slate-500 block text-[10px]">Data Freshness</span>
-                <span className="font-semibold text-slate-200 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <span className="text-text-secondary block text-[10px]">Data Freshness</span>
+                <span className="font-semibold text-text-primary flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-market-up" />
                   {selectedAsset.data_status}
                 </span>
               </div>
@@ -218,7 +255,7 @@ export const Markets: React.FC<MarketsProps> = ({ portfolio, onRefreshPortfolio 
 
             {/* Candlestick & Volume Chart */}
             {loadingBars ? (
-              <div className="h-72 w-full flex items-center justify-center bg-slate-900/50 rounded-xl border border-slate-800 text-slate-400 text-xs">
+              <div className="h-72 w-full flex items-center justify-center bg-surface-card rounded-xl border border-border-subtle text-text-secondary text-xs">
                 Loading price candles...
               </div>
             ) : (
@@ -238,12 +275,9 @@ export const Markets: React.FC<MarketsProps> = ({ portfolio, onRefreshPortfolio 
       {showOrderTicket && selectedAsset && (
         <OrderTicket
           asset={selectedAsset}
-          availableCash={portfolio?.available_cash ?? 100000}
-          availablePositionQty={
-            portfolio?.positions?.find((p) => p.asset_id === selectedAsset.id)?.quantity ?? 0
-          }
+          portfolio={portfolio}
           onClose={() => setShowOrderTicket(false)}
-          onOrderSuccess={() => {
+          onOrderSubmitted={() => {
             onRefreshPortfolio();
             loadAssets();
           }}
@@ -252,3 +286,4 @@ export const Markets: React.FC<MarketsProps> = ({ portfolio, onRefreshPortfolio 
     </div>
   );
 };
+export default Markets;
