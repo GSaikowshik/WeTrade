@@ -61,199 +61,95 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const cashOffset = cashCircumference * (1 - cashPct / 100);
 
   return (
-    <div className="flex flex-col w-full pb-space-xl space-y-space-lg animate-in fade-in duration-150">
-      {/* Top Workspace Context Strip */}
-      <section className="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md pt-2 pb-space-xs border-b border-surface-container-high/60">
-        <div className="flex flex-col max-w-2xl">
-          <div className="flex items-center gap-space-xs mb-1">
-            <span className="font-label-sm text-label-sm text-primary uppercase font-semibold tracking-wider text-[11px]">
-              Trading Desk
-            </span>
-            <span className="text-text-tertiary">/</span>
-            <span className="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider text-[11px]">
-              Simulated Environment
-            </span>
-          </div>
-          <h1 className="font-headline-lg text-headline-lg text-text-primary tracking-tight font-semibold">
-            Your trading workspace
-          </h1>
-          <p className="font-body-md text-body-md text-text-secondary mt-1">
-            Real-time simulated NSE execution. Zero risk, professional market practice with institutional rigor.
-          </p>
-        </div>
+    <div className="flex flex-col w-full pb-16 space-y-6 animate-in fade-in duration-150">
+      {/* Top Banner / Robinhood-Style Hero Balance Strip */}
+      <section className="glass-card rounded-3xl p-6 sm:p-8 relative overflow-hidden">
+        {/* Neon Ambient Background Lights */}
+        <div className="absolute top-0 right-1/4 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 right-0 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div className="flex flex-wrap items-center gap-space-sm">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-badge-demo-bg shadow-xs border border-surface-container-high/60">
-            <span className="w-2 h-2 rounded-full bg-market-up animate-pulse"></span>
-            <span className="font-label-sm text-label-sm text-badge-demo-text uppercase font-semibold tracking-wider text-[10px]">
-              DEMO FEED: REAL-TIME CALIBRATED
-            </span>
-          </div>
-          <Link
-            to="/portfolio"
-            className="px-space-md py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md transition-colors flex items-center gap-1.5 shadow-xs border border-surface-container-high/60"
-          >
-            <span className="material-symbols-outlined text-[16px] text-text-secondary">pie_chart</span>
-            <span>View Portfolio</span>
-          </Link>
-          <Link
-            to="/markets"
-            className="px-space-md py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md transition-colors flex items-center gap-1.5 shadow-xs"
-          >
-            <span className="material-symbols-outlined text-[16px]">travel_explore</span>
-            <span>Explore Markets</span>
-          </Link>
-          {!user && (
-            <button
-              onClick={onOpenAuth}
-              className="px-space-md py-2 rounded-lg bg-surface-card hover:bg-surface-subtle text-primary font-label-md text-label-md transition-colors flex items-center gap-1.5 border border-primary/30 shadow-xs"
-            >
-              <span className="material-symbols-outlined text-[16px]">login</span>
-              <span>Sign In / Demo</span>
-            </button>
-          )}
-        </div>
-      </section>
-
-      {/* Metric Architecture (Top 4-Card Ribbon) */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
-        {/* Card 1: Total Portfolio Value */}
-        <div className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-text-secondary">
-            <span className="font-label-sm text-label-sm uppercase tracking-wider text-[11px]">
-              Total Portfolio Value
-            </span>
-            <span className="material-symbols-outlined text-[18px] text-text-tertiary">
-              account_balance_wallet
-            </span>
-          </div>
-          <div className="mt-space-md">
-            <div className="font-numeric-lg text-numeric-lg text-text-primary font-semibold tracking-tight">
-              ₹{fmtMoney(totalValue)}
-            </div>
-            <div className="flex items-center gap-1.5 mt-1">
-              <span className="font-label-md text-label-md text-text-secondary text-xs">
-                Starting capital allocated: ₹1,00,000.00
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+          <div className="flex flex-col space-y-2">
+            <div className="flex items-center gap-2">
+              <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] font-extrabold tracking-wider uppercase">
+                VIRTUAL CAPITAL DESK
               </span>
+              <span className="text-slate-600">•</span>
+              <span className="text-xs text-slate-400 font-medium">NSE Live Emulation</span>
             </div>
-          </div>
-        </div>
 
-        {/* Card 2: Available Cash */}
-        <div className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-text-secondary">
-            <span className="font-label-sm text-label-sm uppercase tracking-wider text-[11px]">
-              Available Virtual Cash
-            </span>
-            <span className="material-symbols-outlined text-[18px] text-text-tertiary">
-              payments
-            </span>
-          </div>
-          <div className="mt-space-md">
-            <div className="font-numeric-lg text-numeric-lg text-text-primary font-semibold tracking-tight">
-              ₹{fmtMoney(cash)}
-            </div>
-            <div className="flex items-center gap-1.5 mt-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-market-up"></span>
-              <span className="font-label-md text-label-md text-market-up font-medium text-xs">
-                {cashPct.toFixed(0)}% liquid & unencumbered
+            <div className="pt-1">
+              <span className="text-xs text-slate-400 uppercase tracking-widest font-semibold block mb-1">
+                Total Portfolio Value
               </span>
+              <div className="text-4xl sm:text-5xl font-black text-white tracking-tight font-mono">
+                ₹{fmtMoney(totalValue)}
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Card 3: Unrealized P&L */}
-        <div className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-text-secondary">
-            <span className="font-label-sm text-label-sm uppercase tracking-wider text-[11px]">
-              Unrealized P&amp;L
-            </span>
-            <span className="material-symbols-outlined text-[18px] text-text-tertiary">
-              monitoring
-            </span>
-          </div>
-          <div className="mt-space-md">
-            <div
-              className={`font-numeric-lg text-numeric-lg font-semibold tracking-tight ${
-                isPnlPositive ? 'text-market-up' : 'text-market-down'
-              }`}
-            >
-              {isPnlPositive ? '+' : ''}₹{fmtMoney(unrealizedPnl)}
-            </div>
-            <div className="flex items-center gap-1.5 mt-1">
-              <span
-                className={`px-1.5 py-0.5 rounded text-[11px] font-semibold ${
+            <div className="flex flex-wrap items-center gap-3 pt-1">
+              <div
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono ${
                   isPnlPositive
-                    ? 'bg-market-up-subtle text-market-up'
-                    : 'bg-market-down-subtle text-market-down'
+                    ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-[0_0_15px_rgba(16,185,129,0.2)]'
+                    : 'bg-rose-500/15 text-rose-400 border border-rose-500/30 shadow-[0_0_15px_rgba(244,63,94,0.2)]'
                 }`}
               >
-                {isPnlPositive ? '+' : ''}
-                {fmtPct(unrealizedPct)}% return
-              </span>
-              <span className="font-label-sm text-[11px] text-text-tertiary">
-                Holdings: ₹{fmtMoney(holdingsValue)}
+                <span className="material-symbols-outlined text-[15px]">
+                  {isPnlPositive ? 'trending_up' : 'trending_down'}
+                </span>
+                <span>
+                  {isPnlPositive ? '+' : ''}₹{fmtMoney(unrealizedPnl)} ({fmtPct(unrealizedPct)}%)
+                </span>
+              </div>
+              <span className="text-xs text-slate-400">
+                Cash: <strong className="text-white font-mono">₹{fmtMoney(cash)}</strong>
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Card 4: Realized P&L / Trade Win Rate */}
-        <div className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-text-secondary">
-            <span className="font-label-sm text-label-sm uppercase tracking-wider text-[11px]">
-              Realized P&amp;L / Win Rate
-            </span>
-            <span className="material-symbols-outlined text-[18px] text-text-tertiary">
-              query_stats
-            </span>
-          </div>
-          <div className="mt-space-md">
-            <div
-              className={`font-numeric-lg text-numeric-lg font-semibold tracking-tight ${
-                isRealizedPositive ? 'text-market-up' : 'text-market-down'
-              }`}
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              to="/markets"
+              className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 text-xs font-black transition-all shadow-[0_0_25px_rgba(16,185,129,0.35)] flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
             >
-              {isRealizedPositive ? '+' : ''}₹{fmtMoney(realizedPnl)}
-            </div>
-            <div className="flex items-center gap-1.5 mt-1 text-xs">
-              <span className="font-medium text-text-primary">
-                {analytics?.win_rate_pct != null
-                  ? `${analytics.win_rate_pct.toFixed(0)}% Win Rate`
-                  : '0% Win Rate'}
-              </span>
-              <span className="text-text-tertiary">•</span>
-              <span className="text-text-secondary">
-                {analytics?.total_trades ?? recentOrders.length} closed trades
-              </span>
-            </div>
+              <span className="material-symbols-outlined text-[18px]">bolt</span>
+              <span>Trade Equities</span>
+            </Link>
+
+            <Link
+              to="/portfolio"
+              className="px-5 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 text-white text-xs font-bold border border-white/10 transition-all flex items-center gap-2 hover:border-white/20"
+            >
+              <span className="material-symbols-outlined text-[18px] text-slate-400">pie_chart</span>
+              <span>My Portfolio</span>
+            </Link>
+
+            {!user && (
+              <button
+                onClick={onOpenAuth}
+                className="px-4 py-2.5 rounded-2xl bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/30 text-xs font-bold transition-all"
+              >
+                Sign In
+              </button>
+            )}
           </div>
         </div>
-      </section>
 
-      {/* Chart & Allocation Section */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
-        {/* Left 8-col: Performance Trajectory */}
-        <div className="lg:col-span-8 p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col justify-between">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm pb-space-sm border-b border-surface-container-low">
-            <div>
-              <h2 className="font-headline-sm text-headline-sm text-text-primary font-semibold">
-                Performance Trajectory
-              </h2>
-              <p className="font-body-sm text-body-sm text-text-secondary text-xs">
-                Simulated valuation trajectory against initial virtual deposit
-              </p>
-            </div>
-            <div className="flex items-center bg-surface-subtle p-0.5 rounded-lg self-start sm:self-auto border border-surface-container-high/40">
+        {/* Robinhood-Style Glowing Equity Curve */}
+        <div className="relative w-full h-56 mt-6 pt-4 border-t border-white/5">
+          <div className="flex items-center justify-between pb-2">
+            <span className="text-xs font-semibold text-slate-400">Trajectory Performance</span>
+            <div className="flex items-center bg-[#070A11] p-1 rounded-xl border border-white/10">
               {(['1D', '1W', '1M', '3M', '1Y', 'ALL'] as const).map((tf) => (
                 <button
                   key={tf}
                   type="button"
                   onClick={() => setTimeframe(tf)}
-                  className={`px-2.5 py-1 rounded font-label-sm text-[11px] font-semibold transition-colors ${
+                  className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                     timeframe === tf
-                      ? 'bg-surface-card text-text-primary shadow-xs'
-                      : 'text-text-secondary hover:text-text-primary'
+                      ? 'bg-emerald-500 text-slate-950 shadow-[0_0_12px_rgba(16,185,129,0.4)]'
+                      : 'text-slate-400 hover:text-white'
                   }`}
                 >
                   {tf}
@@ -262,434 +158,378 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </div>
           </div>
 
-          {/* SVG Trajectory Chart */}
-          <div className="relative w-full h-64 mt-space-sm">
-            <svg
-              className="w-full h-full overflow-visible"
-              preserveAspectRatio="none"
-              viewBox="0 0 800 240"
-            >
-              <defs>
-                <linearGradient id="baselineGrad" x1="0" x2="0" y1="0" y2="1">
-                  <stop offset="0%" stopColor="#00422d" stopOpacity="0.12" />
-                  <stop offset="100%" stopColor="#00422d" stopOpacity="0.0" />
-                </linearGradient>
-              </defs>
-              {/* Horizontal gridlines */}
-              <line stroke="#E5E8E2" strokeDasharray="3 3" x1="0" x2="800" y1="60" y2="60" />
-              <line stroke="#E5E8E2" strokeDasharray="3 3" x1="0" x2="800" y1="120" y2="120" />
-              <line stroke="#E5E8E2" strokeDasharray="3 3" x1="0" x2="800" y1="180" y2="180" />
+          <svg className="w-full h-44 overflow-visible" preserveAspectRatio="none" viewBox="0 0 800 200">
+            <defs>
+              <linearGradient id="neonAreaGrad" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stopColor="#00E676" stopOpacity="0.3" />
+                <stop offset="85%" stopColor="#00E676" stopOpacity="0.0" />
+              </linearGradient>
+              <filter id="neonGlow">
+                <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                <feMerge>
+                  <feMergeNode in="coloredBlur"/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
 
-              {/* Area fill */}
-              <polygon
-                fill="url(#baselineGrad)"
-                points="0,170 120,165 240,158 360,140 480,148 600,132 720,124 800,118 800,240 0,240"
-              />
-              {/* Main curve */}
-              <polyline
-                fill="none"
-                stroke="#00422d"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                points="0,170 120,165 240,158 360,140 480,148 600,132 720,124 800,118"
-              />
-              {/* Final active marker */}
-              <circle cx="800" cy="118" r="4.5" fill="#00422d" stroke="#FFFFFF" strokeWidth="2" />
-            </svg>
+            {/* Subtle horizontal grid lines */}
+            <line stroke="rgba(255,255,255,0.05)" strokeDasharray="4 4" x1="0" x2="800" y1="50" y2="50" />
+            <line stroke="rgba(255,255,255,0.05)" strokeDasharray="4 4" x1="0" x2="800" y1="100" y2="100" />
+            <line stroke="rgba(255,255,255,0.05)" strokeDasharray="4 4" x1="0" x2="800" y1="150" y2="150" />
 
-            {/* In-chart metadata pills */}
-            <div className="absolute top-2 left-3 px-2 py-1 rounded bg-surface-card/90 backdrop-blur border border-surface-container-high/80 text-[11px] shadow-xs">
-              <span className="text-text-secondary">Deposit: </span>
-              <span className="font-semibold text-text-primary">₹1,00,000.00</span>
-            </div>
-            <div className="absolute top-2 right-3 px-2 py-1 rounded bg-surface-card/90 backdrop-blur border border-surface-container-high/80 text-[11px] shadow-xs">
-              <span className="text-text-secondary">Current Mark: </span>
-              <span className="font-semibold text-market-up">₹{fmtMoney(totalValue)}</span>
+            {/* Glowing Gradient Area */}
+            <polygon
+              fill="url(#neonAreaGrad)"
+              points="0,150 100,145 220,138 340,118 460,126 580,108 700,98 800,90 800,200 0,200"
+            />
+
+            {/* Main Neon Line */}
+            <polyline
+              fill="none"
+              stroke="#00E676"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              filter="url(#neonGlow)"
+              points="0,150 100,145 220,138 340,118 460,126 580,108 700,98 800,90"
+            />
+
+            {/* Active End Dot */}
+            <circle cx="800" cy="90" r="5" fill="#00E676" stroke="#FFFFFF" strokeWidth="2" />
+          </svg>
+        </div>
+      </section>
+
+      {/* 3 Neo Stat Cards */}
+      <section className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+        {/* Card 1: Available Cash */}
+        <div className="glass-card rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Liquid Cash
+            </span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+              <span className="material-symbols-outlined text-[18px]">payments</span>
             </div>
           </div>
-
-          <div className="pt-space-xs flex items-center justify-between text-xs text-text-tertiary border-t border-surface-container-low">
-            <span>NSE Equities Intraday Engine</span>
-            <span>Simulated Ledger Invariants: Active</span>
+          <div className="mt-3">
+            <div className="text-2xl font-black text-white font-mono">
+              ₹{fmtMoney(cash)}
+            </div>
+            <div className="flex items-center gap-1.5 mt-2">
+              <div className="flex-1 bg-white/10 rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="bg-emerald-400 h-1.5 rounded-full"
+                  style={{ width: `${cashPct}%` }}
+                ></div>
+              </div>
+              <span className="text-[11px] font-mono text-emerald-400 font-bold">
+                {cashPct.toFixed(0)}%
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Right 4-col: Capital Allocation Donut */}
-        <div className="lg:col-span-4 p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between mb-space-xs">
-              <h2 className="font-headline-sm text-headline-sm text-text-primary font-semibold">
-                Capital Allocation
-              </h2>
-              <span className="font-label-sm text-label-sm uppercase tracking-wider text-text-secondary text-[10px]">
-                Liquid Asset Model
-              </span>
+        {/* Card 2: Open Holdings */}
+        <div className="glass-card rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Equity Holdings
+            </span>
+            <div className="w-8 h-8 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center">
+              <span className="material-symbols-outlined text-[18px]">bar_chart</span>
             </div>
-            <p className="font-body-sm text-body-sm text-text-secondary text-xs">
-              Asset deployment across virtual cash &amp; open equities
-            </p>
           </div>
-
-          {/* Donut Vector Chart */}
-          <div className="py-space-md flex flex-col items-center justify-center relative">
-            <svg className="w-36 h-36 transform -rotate-90" viewBox="0 0 120 120">
-              {/* Background Track */}
-              <circle cx="60" cy="60" fill="none" r="48" stroke="#ECEFEA" strokeWidth="12" />
-              {/* Cash Ring */}
-              <circle
-                cx="60"
-                cy="60"
-                fill="none"
-                r="48"
-                stroke="#00422d"
-                strokeWidth="12"
-                strokeDasharray="301.6"
-                strokeDashoffset={cashOffset}
-                strokeLinecap="round"
-              />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <span className="font-numeric-md text-numeric-md font-semibold text-text-primary">
-                {cashPct.toFixed(0)}%
-              </span>
-              <span className="font-label-sm text-[10px] text-text-secondary uppercase tracking-widest mt-0.5 font-medium">
-                INR CASH
+          <div className="mt-3">
+            <div className="text-2xl font-black text-white font-mono">
+              ₹{fmtMoney(holdingsValue)}
+            </div>
+            <div className="flex items-center gap-1.5 mt-2">
+              <div className="flex-1 bg-white/10 rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="bg-cyan-400 h-1.5 rounded-full"
+                  style={{ width: `${equityPct}%` }}
+                ></div>
+              </div>
+              <span className="text-[11px] font-mono text-cyan-400 font-bold">
+                {equityPct.toFixed(0)}%
               </span>
             </div>
           </div>
+        </div>
 
-          {/* Breakdown Table */}
-          <div className="flex flex-col gap-2 pt-space-xs">
-            <div className="flex items-center justify-between p-2 rounded-lg bg-surface-container-low text-xs">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-primary"></span>
-                <span className="text-text-primary font-medium">Virtual Cash Reserve</span>
-              </div>
-              <span className="font-numeric-sm font-semibold text-text-primary">
-                ₹{fmtMoney(cash)}
-              </span>
+        {/* Card 3: Realized P&L / Win Rate */}
+        <div className="glass-card rounded-2xl p-5 relative overflow-hidden flex flex-col justify-between">
+          <div className="flex items-center justify-between text-slate-400">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+              Realized P&amp;L
+            </span>
+            <div className="w-8 h-8 rounded-xl bg-purple-500/10 border border-purple-500/20 text-purple-400 flex items-center justify-center">
+              <span className="material-symbols-outlined text-[18px]">insights</span>
             </div>
-
-            <div className="flex items-center justify-between p-2 rounded-lg bg-surface-container-low text-xs">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-outline-variant"></span>
-                <span className="text-text-primary font-medium">Open Equities</span>
-              </div>
-              <span className="font-numeric-sm font-semibold text-text-primary">
-                ₹{fmtMoney(holdingsValue)} ({equityPct.toFixed(0)}%)
+          </div>
+          <div className="mt-3">
+            <div
+              className={`text-2xl font-black font-mono ${
+                isRealizedPositive ? 'text-emerald-400' : 'text-rose-400'
+              }`}
+            >
+              {isRealizedPositive ? '+' : ''}₹{fmtMoney(realizedPnl)}
+            </div>
+            <div className="flex items-center gap-2 mt-2 text-xs">
+              <span className="px-2 py-0.5 rounded-md bg-white/5 border border-white/10 text-slate-300 font-bold font-mono">
+                {analytics?.win_rate_pct != null ? `${analytics.win_rate_pct.toFixed(0)}% Wins` : '0% Wins'}
+              </span>
+              <span className="text-slate-500 font-mono">
+                {analytics?.total_trades ?? recentOrders.length} trades
               </span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Supported NSE Equities (Dense Table / Grid) */}
-      <section className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm mb-space-md">
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="font-headline-sm text-headline-sm text-text-primary font-semibold">
-                Supported NSE Equities
+      {/* Main Grid: Indian Equities Market & Capital Allocation */}
+      <section className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left 8-col: Top Indian Equities (Revolut/Robinhood asset cards) */}
+        <div className="lg:col-span-8 glass-card rounded-3xl p-6">
+          <div className="flex items-center justify-between pb-4 border-b border-white/5 mb-4">
+            <div>
+              <h2 className="text-lg font-black text-white tracking-tight">
+                NSE High-Liquidity Universe
               </h2>
-              <span className="px-2 py-0.5 rounded-full bg-surface-subtle text-text-secondary font-label-sm text-[11px] font-medium border border-border-subtle">
-                {assets.length || 6} Instruments
-              </span>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Simulated real-time quote feeds with slippage &amp; STT emulation
+              </p>
             </div>
-            <p className="font-body-sm text-body-sm text-text-secondary text-xs">
-              Real-time simulation feed calibrated to Indian standard indices
-            </p>
-          </div>
-
-          <div className="flex items-center gap-space-xs text-xs text-text-tertiary">
-            <span>Tick-by-tick simulation</span>
             <Link
               to="/markets"
-              className="font-medium text-primary hover:text-on-primary-fixed-variant ml-2 flex items-center gap-1"
+              className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
             >
-              <span>View Terminal</span>
+              <span>Full Terminal</span>
               <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
             </Link>
           </div>
-        </div>
 
-        {/* Dense Data Table */}
-        <div className="overflow-x-auto -mx-space-md px-space-md">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-surface-subtle/80 text-text-secondary font-label-sm text-[11px] uppercase tracking-wider h-9">
-                <th className="py-2 px-3 font-semibold rounded-l-md">Symbol &amp; Company</th>
-                <th className="py-2 px-3 font-semibold text-right">LTP (₹)</th>
-                <th className="py-2 px-3 font-semibold text-right">24h Change</th>
-                <th className="py-2 px-3 font-semibold text-right">Day Range (L - H)</th>
-                <th className="py-2 px-3 font-semibold text-right">Sector</th>
-                <th className="py-2 px-3 font-semibold text-center">7D Trend</th>
-                <th className="py-2 px-3 font-semibold text-right rounded-r-md">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-surface-container-low font-body-sm text-body-sm text-xs">
-              {assets.map((asset) => {
-                const price = toNum(asset.current_price) || 1000;
-                const change = toNum(asset.change_24h);
-                const changePct = toNum(asset.change_24h);
-                const isPositive = change >= 0;
-                const dayLow = toNum(asset.low_24h) || price * 0.985;
-                const dayHigh = toNum(asset.high_24h) || price * 1.015;
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {assets.map((asset) => {
+              const price = toNum(asset.current_price) || 1000;
+              const change = toNum(asset.change_24h);
+              const changePct = toNum(asset.change_24h);
+              const isPositive = change >= 0;
 
-                return (
-                  <tr key={asset.id} className="hover:bg-surface-subtle/60 transition-colors group">
-                    <td className="py-3 px-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded bg-surface-container-high flex items-center justify-center font-bold text-[11px] text-text-primary shadow-2xs">
-                          {asset.symbol.slice(0, 2)}
-                        </div>
-                        <div className="flex flex-col">
-                          <Link
-                            to={`/markets?symbol=${asset.symbol}`}
-                            className="font-numeric-sm text-sm font-semibold text-text-primary hover:text-primary transition-colors"
-                          >
-                            {asset.symbol}
-                          </Link>
-                          <span className="text-text-secondary text-[11px]">{asset.name}</span>
-                        </div>
+              return (
+                <div
+                  key={asset.id}
+                  className="bg-[#0B101E]/80 hover:bg-[#12192E] p-4 rounded-2xl border border-white/5 hover:border-emerald-500/30 transition-all cursor-pointer flex flex-col justify-between group shadow-lg"
+                  onClick={() => setSelectedAssetForTrade(asset)}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center font-black text-sm text-white group-hover:border-emerald-500/50 group-hover:text-emerald-400 transition-colors">
+                        {asset.symbol.slice(0, 2)}
                       </div>
-                    </td>
-
-                    <td className="py-3 px-3 text-right font-numeric-md font-semibold text-text-primary">
-                      ₹{fmtMoney(price)}
-                    </td>
-
-                    <td className="py-3 px-3 text-right">
-                      <span
-                        className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded font-semibold text-[11px] ${
-                          isPositive
-                            ? 'bg-market-up-subtle text-market-up'
-                            : 'bg-market-down-subtle text-market-down'
-                        }`}
-                      >
-                        <span className="material-symbols-outlined text-[13px]">
-                          {isPositive ? 'trending_up' : 'trending_down'}
+                      <div className="flex flex-col">
+                        <span className="font-extrabold text-sm text-white group-hover:text-emerald-400 transition-colors">
+                          {asset.symbol}
                         </span>
-                        <span>
-                          {isPositive ? '+' : ''}₹{fmtMoney(change)} ({fmtPct(changePct)}%)
+                        <span className="text-[11px] text-slate-400 truncate max-w-[130px]">
+                          {asset.name}
                         </span>
-                      </span>
-                    </td>
-
-                    <td className="py-3 px-3 text-right text-text-secondary">
-                      ₹{fmtMoney(dayLow, 1)} – ₹{fmtMoney(dayHigh, 1)}
-                    </td>
-
-                    <td className="py-3 px-3 text-right text-text-secondary">
-                      <span className="px-2 py-0.5 rounded bg-surface-container-low text-[11px]">
-                        {asset.exchange}
-                      </span>
-                    </td>
-
-                    <td className="py-3 px-3 text-center">
-                      <svg className="w-20 h-5 inline-block" viewBox="0 0 80 20">
-                        <polyline
-                          fill="none"
-                          stroke={isPositive ? '#0F766E' : '#B91C1C'}
-                          strokeWidth="1.5"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          points={
-                            isPositive
-                              ? '0,15 15,14 30,16 45,9 60,11 80,4'
-                              : '0,5 15,7 30,4 45,13 60,10 80,16'
-                          }
-                        />
-                      </svg>
-                    </td>
-
-                    <td className="py-3 px-3 text-right">
-                      <button
-                        type="button"
-                        onClick={() => setSelectedAssetForTrade(asset)}
-                        className="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-primary hover:text-on-primary text-text-primary font-label-md text-xs font-semibold transition-all shadow-2xs"
-                      >
-                        Trade
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* Bottom Section: Recent Orders & We Trade Academy */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
-        {/* Left 7-col: Recent Simulated Orders */}
-        <div className="lg:col-span-7 p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between pb-space-sm border-b border-surface-container-low">
-              <div>
-                <h2 className="font-headline-sm text-headline-sm text-text-primary font-semibold">
-                  Recent Simulated Orders
-                </h2>
-                <p className="font-body-sm text-body-sm text-text-secondary text-xs">
-                  Audit log of your simulated intraday &amp; delivery fills
-                </p>
-              </div>
-              <Link
-                to="/orders"
-                className="font-label-sm text-xs font-semibold text-primary hover:text-on-primary-fixed-variant"
-              >
-                View All
-              </Link>
-            </div>
-
-            {recentOrders.length > 0 ? (
-              <div className="divide-y divide-surface-container-low mt-2">
-                {recentOrders.map((ord) => {
-                  const isBuy = ord.side === 'BUY';
-                  const fillPrice = toNum(ord.average_fill_price) || toNum(ord.limit_price);
-                  return (
-                    <div key={ord.id} className="py-2.5 flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`px-2 py-0.5 rounded font-bold text-[10px] ${
-                            isBuy
-                              ? 'bg-market-up-subtle text-market-up'
-                              : 'bg-market-down-subtle text-market-down'
-                          }`}
-                        >
-                          {ord.side}
-                        </span>
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-text-primary">
-                            {ord.asset_symbol || 'NSE'}
-                          </span>
-                          <span className="text-text-tertiary text-[10px]">
-                            {ord.order_type} • {ord.quantity} shares
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <div className="flex flex-col text-right">
-                          <span className="font-numeric-sm font-semibold text-text-primary">
-                            ₹{fmtMoney(fillPrice)}
-                          </span>
-                          <span className="text-[10px] text-text-secondary uppercase">
-                            {ord.status}
-                          </span>
-                        </div>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="py-8 flex flex-col items-center justify-center text-center max-w-sm mx-auto">
-                <div className="w-12 h-12 rounded-full bg-surface-container-low flex items-center justify-center text-text-tertiary mb-space-sm">
-                  <span className="material-symbols-outlined text-[24px]">receipt_long</span>
-                </div>
-                <h3 className="font-headline-sm text-headline-sm text-text-primary font-medium">
-                  No trades executed yet
-                </h3>
-                <p className="font-body-sm text-body-sm text-text-secondary mt-1 text-xs">
-                  Simulate your first market or limit order using your ₹1,00,000.00 virtual capital balance with live market depth.
-                </p>
-                <Link
-                  to="/markets"
-                  className="mt-space-md px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-sm"
-                >
-                  <span className="material-symbols-outlined text-[16px]">add</span>
-                  <span>Place Simulated Order</span>
-                </Link>
-              </div>
-            )}
-          </div>
 
-          <div className="pt-space-xs text-center border-t border-surface-container-low mt-4">
-            <span className="font-label-sm text-[11px] text-text-tertiary">
-              All simulated fills conform to actual NSE order matching principles.
-            </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedAssetForTrade(asset);
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500 text-emerald-400 hover:text-slate-950 border border-emerald-500/30 font-bold text-xs transition-all shadow-xs"
+                    >
+                      Trade
+                    </button>
+                  </div>
+
+                  <div className="mt-4 pt-3 border-t border-white/5 flex items-baseline justify-between">
+                    <div className="text-base font-extrabold text-white font-mono">
+                      ₹{fmtMoney(price)}
+                    </div>
+                    <div
+                      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-mono text-xs font-bold ${
+                        isPositive
+                          ? 'bg-emerald-500/15 text-emerald-400'
+                          : 'bg-rose-500/15 text-rose-400'
+                      }`}
+                    >
+                      <span className="material-symbols-outlined text-[13px]">
+                        {isPositive ? 'arrow_drop_up' : 'arrow_drop_down'}
+                      </span>
+                      <span>
+                        {isPositive ? '+' : ''}
+                        {fmtPct(changePct)}%
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* Right 5-col: We Trade Academy: Paper Trading 101 */}
-        <div className="lg:col-span-5 p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col justify-between">
-          <div>
-            <div className="flex items-center justify-between pb-space-xs border-b border-surface-container-low">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-[20px]">school</span>
-                <h2 className="font-headline-sm text-headline-sm text-text-primary font-semibold">
-                  We Trade Academy
-                </h2>
-              </div>
-              <span className="font-label-sm text-[11px] text-primary font-semibold">
-                CURRICULUM
+        {/* Right 4-col: Capital Allocation Ring & Neo Academy */}
+        <div className="lg:col-span-4 space-y-6">
+          {/* Capital Ring */}
+          <div className="glass-card rounded-3xl p-6 flex flex-col justify-between">
+            <div className="flex items-center justify-between pb-3 border-b border-white/5 mb-3">
+              <h3 className="text-sm font-black text-white">Capital Allocation</h3>
+              <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase">
+                {cashPct.toFixed(0)}% Cash
               </span>
             </div>
-            <p className="font-body-sm text-body-sm text-text-secondary text-xs mt-1">
-              Core simulation principles before committing real market capital
-            </p>
 
-            {/* Checklist items */}
-            <div className="flex flex-col gap-2 mt-3 text-xs">
-              <div className="p-2.5 rounded-lg bg-surface-subtle/70 flex items-start gap-2.5 border border-border-subtle/50">
-                <span className="material-symbols-outlined text-market-up text-[18px] shrink-0">
-                  check_circle
+            <div className="py-4 flex flex-col items-center justify-center relative">
+              <svg className="w-36 h-36 transform -rotate-90" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" fill="none" r="48" stroke="rgba(255,255,255,0.08)" strokeWidth="10" />
+                <circle
+                  cx="60"
+                  cy="60"
+                  fill="none"
+                  r="48"
+                  stroke="#00E676"
+                  strokeWidth="10"
+                  strokeDasharray="301.6"
+                  strokeDashoffset={cashOffset}
+                  strokeLinecap="round"
+                  className="transition-all duration-500"
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+                <span className="text-xl font-black text-white font-mono">
+                  {cashPct.toFixed(0)}%
                 </span>
-                <div className="flex flex-col">
-                  <span className="font-semibold text-text-primary">
-                    Market Orders vs Limit Orders
-                  </span>
-                  <span className="text-text-secondary text-[11px]">
-                    Market executes immediately with slippage. Limit executes only when price matches your target.
-                  </span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  Liquid
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 text-xs font-mono">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span className="text-slate-300">Virtual Cash</span>
                 </div>
+                <span className="font-bold text-white">₹{fmtMoney(cash)}</span>
               </div>
 
-              <div className="p-2.5 rounded-lg bg-surface-subtle/70 flex items-start gap-2.5 border border-border-subtle/50">
-                <span className="material-symbols-outlined text-market-up text-[18px] shrink-0">
-                  check_circle
-                </span>
-                <div className="flex flex-col">
-                  <span className="font-semibold text-text-primary">
-                    Brokerage, STT &amp; Taxes Emulation
-                  </span>
-                  <span className="text-text-secondary text-[11px]">
-                    ₹20 flat brokerage plus STT/turnover charges deducted directly from ledger upon execution.
-                  </span>
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-white/5 text-xs font-mono">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+                  <span className="text-slate-300">Equities</span>
                 </div>
-              </div>
-
-              <div className="p-2.5 rounded-lg bg-surface-subtle/70 flex items-start gap-2.5 border border-border-subtle/50">
-                <span className="material-symbols-outlined text-primary text-[18px] shrink-0">
-                  radio_button_unchecked
-                </span>
-                <div className="flex flex-col">
-                  <span className="font-semibold text-text-primary">
-                    Write Your Trade Thesis in Journal
-                  </span>
-                  <span className="text-text-secondary text-[11px]">
-                    Document stop-loss, risk-reward ratio, and rationale to avoid emotional biases.
-                  </span>
-                </div>
+                <span className="font-bold text-white">₹{fmtMoney(holdingsValue)}</span>
               </div>
             </div>
           </div>
 
-          <div className="pt-3 border-t border-surface-container-low mt-4 flex items-center justify-between">
-            <span className="text-xs text-text-tertiary">Learn at your own pace</span>
+          {/* Quick Academy Card */}
+          <div className="glass-card rounded-3xl p-6 bg-gradient-to-br from-[#121B30] to-[#0A0E1A]">
+            <div className="flex items-center gap-2.5 mb-2">
+              <div className="w-8 h-8 rounded-xl bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                <span className="material-symbols-outlined text-[18px]">school</span>
+              </div>
+              <h3 className="text-sm font-bold text-white">We Trade Academy</h3>
+            </div>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Master order routing, stop targets, and brokerage fees before risking real money in live markets.
+            </p>
             <Link
               to="/learn"
-              className="text-xs font-semibold text-primary hover:text-on-primary-fixed-variant flex items-center gap-1"
+              className="mt-3.5 inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
             >
-              <span>Explore All Lessons</span>
-              <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
+              <span>Explore Trading Lessons</span>
+              <span className="material-symbols-outlined text-[15px]">arrow_forward</span>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Order Ticket Modal (Stitch Modal Overlay) */}
+      {/* Recent Orders Log */}
+      <section className="glass-card rounded-3xl p-6">
+        <div className="flex items-center justify-between pb-4 border-b border-white/5 mb-4">
+          <div>
+            <h2 className="text-lg font-black text-white tracking-tight">Recent Simulated Orders</h2>
+            <p className="text-xs text-slate-400 mt-0.5">Execution log &amp; simulated fills</p>
+          </div>
+          <Link
+            to="/orders"
+            className="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1"
+          >
+            <span>All Orders</span>
+            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+          </Link>
+        </div>
+
+        {recentOrders.length > 0 ? (
+          <div className="divide-y divide-white/5">
+            {recentOrders.map((ord) => {
+              const isBuy = ord.side === 'BUY';
+              const fillPrice = toNum(ord.average_fill_price) || toNum(ord.limit_price);
+              return (
+                <div key={ord.id} className="py-3 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`px-2.5 py-1 rounded-lg font-black text-[10px] tracking-wider font-mono ${
+                        isBuy
+                          ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                          : 'bg-rose-500/15 text-rose-400 border border-rose-500/30'
+                      }`}
+                    >
+                      {ord.side}
+                    </span>
+                    <div className="flex flex-col">
+                      <span className="font-extrabold text-white text-sm">
+                        {ord.asset_symbol || 'NSE'}
+                      </span>
+                      <span className="text-[11px] text-slate-400">
+                        {ord.order_type} • {ord.quantity} shares
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 text-right">
+                    <div className="flex flex-col font-mono">
+                      <span className="font-bold text-white">₹{fmtMoney(fillPrice)}</span>
+                      <span className="text-[10px] text-slate-500 uppercase">{ord.status}</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="py-12 text-center text-slate-500 text-xs">
+            <span className="material-symbols-outlined text-[36px] text-slate-600 mx-auto mb-2 block">
+              receipt_long
+            </span>
+            <p className="font-bold text-white text-sm">No trades executed yet</p>
+            <p className="mt-1 text-slate-400">
+              Submit your first order using ₹1,00,000.00 virtual capital with zero risk.
+            </p>
+            <button
+              onClick={() => {
+                if (assets.length > 0) setSelectedAssetForTrade(assets[0]);
+              }}
+              className="mt-4 px-4 py-2 rounded-xl bg-emerald-500 text-slate-950 font-bold text-xs shadow-[0_0_15px_rgba(16,185,129,0.3)] hover:bg-emerald-400 transition-all"
+            >
+              Place Simulated Order
+            </button>
+          </div>
+        )}
+      </section>
+
+      {/* Order Ticket Modal */}
       {selectedAssetForTrade && (
         <OrderTicket
           asset={selectedAssetForTrade}

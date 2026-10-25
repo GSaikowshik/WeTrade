@@ -26,171 +26,175 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
 
   const isUnrealizedUp = unrealized >= 0;
   const isRealizedUp = realized >= 0;
+  const cashRatio = Math.min(100, Math.max(0, (cash / (totalValue || 1)) * 100));
 
   return (
-    <div className="flex flex-col w-full pb-10 space-y-space-lg animate-in fade-in duration-150">
+    <div className="flex flex-col w-full pb-14 space-y-6 animate-in fade-in duration-200">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-sm pb-space-xs border-b border-surface-container-high/60">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-white/5">
         <div>
-          <div className="flex items-center gap-space-xs mb-1">
-            <span className="font-label-sm text-[11px] text-primary uppercase font-semibold tracking-wider">
-              Asset Ledger
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#00E676] font-semibold">
+              Live Holdings
             </span>
-            <span className="text-text-tertiary">/</span>
-            <span className="font-label-sm text-[11px] text-text-secondary uppercase tracking-wider">
-              Holdings &amp; Valuation
+            <span className="text-white/20">/</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
+              Valuation Ledger
             </span>
           </div>
-          <h1 className="font-headline-lg text-headline-lg font-semibold text-text-primary tracking-tight">
+          <h1 className="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
             Virtual Portfolio
           </h1>
-          <p className="font-body-sm text-body-sm text-text-secondary text-xs mt-1">
-            Real-time weighted average cost basis, unrealized capital gains, and allocation models.
+          <p className="text-xs text-slate-400 mt-1">
+            Real-time weighted-average cost basis, mark-to-market unrealized gains, and capital allocation.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="px-3 py-1.5 rounded-lg bg-badge-demo-bg border border-surface-container-high/60 text-xs font-semibold text-badge-demo-text uppercase flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-market-up animate-pulse"></span>
-            <span>Simulated Capital</span>
+        <div className="flex items-center gap-2.5">
+          <div className="px-3 py-1.5 rounded-full bg-[#00E676]/10 border border-[#00E676]/25 text-xs font-semibold text-[#00E676] flex items-center gap-2 shadow-glow-green">
+            <span className="w-2 h-2 rounded-full bg-[#00E676] animate-pulse"></span>
+            <span>Virtual Capital Verified</span>
           </div>
         </div>
       </div>
 
       {/* Metric Cards Ribbon */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Portfolio Value */}
-        <div className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-text-secondary text-xs">
-            <span className="font-label-sm uppercase tracking-wider text-[11px]">
-              Total Portfolio Net Worth
-            </span>
-            <span className="material-symbols-outlined text-[18px] text-text-tertiary">
-              account_balance_wallet
-            </span>
+        <div className="glass-card p-5 rounded-2xl flex flex-col justify-between relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-[#00E676]/5 rounded-full blur-xl pointer-events-none group-hover:bg-[#00E676]/10 transition-all"></div>
+          <div className="flex items-center justify-between text-slate-400 text-xs">
+            <span className="text-[11px] uppercase tracking-wider font-medium">Net Portfolio Worth</span>
+            <span className="material-symbols-outlined text-[18px] text-slate-500">account_balance_wallet</span>
           </div>
-          <div className="mt-space-md">
-            <div className="font-numeric-lg text-numeric-lg text-text-primary font-semibold tracking-tight">
+          <div className="mt-4">
+            <div className="text-3xl font-bold font-mono text-white tracking-tight">
               ₹{fmtMoney(totalValue)}
             </div>
-            <div className="text-xs text-text-secondary mt-1">
-              Cash (₹{fmtMoney(cash)}) + Equities (₹{fmtMoney(holdingsValue)})
+            <div className="text-xs text-slate-400 mt-1.5 flex items-center justify-between">
+              <span>Equities: ₹{fmtMoney(holdingsValue)}</span>
+              <span className="text-[11px] text-slate-500">Cash: ₹{fmtMoney(cash)}</span>
             </div>
           </div>
         </div>
 
         {/* Available Virtual Cash */}
-        <div className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-text-secondary text-xs">
-            <span className="font-label-sm uppercase tracking-wider text-[11px]">
-              Available Virtual Cash
-            </span>
-            <span className="material-symbols-outlined text-[18px] text-text-tertiary">
-              payments
-            </span>
+        <div className="glass-card p-5 rounded-2xl flex flex-col justify-between relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-[#00F0FF]/5 rounded-full blur-xl pointer-events-none group-hover:bg-[#00F0FF]/10 transition-all"></div>
+          <div className="flex items-center justify-between text-slate-400 text-xs">
+            <span className="text-[11px] uppercase tracking-wider font-medium">Available Cash</span>
+            <span className="material-symbols-outlined text-[18px] text-slate-500">payments</span>
           </div>
-          <div className="mt-space-md">
-            <div className="font-numeric-lg text-numeric-lg text-primary font-semibold tracking-tight">
+          <div className="mt-4">
+            <div className="text-3xl font-bold font-mono text-[#00F0FF] tracking-tight">
               ₹{fmtMoney(cash)}
             </div>
-            <div className="text-xs text-text-secondary mt-1 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-market-up"></span>
-              <span>{((cash / (totalValue || 1)) * 100).toFixed(0)}% liquidity ratio</span>
+            <div className="mt-2.5">
+              <div className="flex justify-between text-[11px] text-slate-400 mb-1">
+                <span>Liquidity Ratio</span>
+                <span className="text-white font-medium">{cashRatio.toFixed(0)}%</span>
+              </div>
+              <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-[#00F0FF] to-[#3B82F6] rounded-full transition-all duration-500"
+                  style={{ width: `${cashRatio}%` }}
+                ></div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Unrealized P&L */}
-        <div className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-text-secondary text-xs">
-            <span className="font-label-sm uppercase tracking-wider text-[11px]">
-              Total Unrealized Gain / Loss
-            </span>
-            <span className="material-symbols-outlined text-[18px] text-text-tertiary">
-              trending_up
-            </span>
+        <div className="glass-card p-5 rounded-2xl flex flex-col justify-between relative overflow-hidden group">
+          <div
+            className={`absolute top-0 right-0 w-24 h-24 rounded-full blur-xl pointer-events-none transition-all ${
+              isUnrealizedUp ? 'bg-[#00E676]/5 group-hover:bg-[#00E676]/10' : 'bg-[#FF385C]/5 group-hover:bg-[#FF385C]/10'
+            }`}
+          ></div>
+          <div className="flex items-center justify-between text-slate-400 text-xs">
+            <span className="text-[11px] uppercase tracking-wider font-medium">Unrealized P&amp;L</span>
+            <span className="material-symbols-outlined text-[18px] text-slate-500">trending_up</span>
           </div>
-          <div className="mt-space-md">
+          <div className="mt-4">
             <div
-              className={`font-numeric-lg text-numeric-lg font-semibold tracking-tight ${
-                isUnrealizedUp ? 'text-market-up' : 'text-market-down'
+              className={`text-3xl font-bold font-mono tracking-tight ${
+                isUnrealizedUp ? 'text-[#00E676]' : 'text-[#FF385C]'
               }`}
             >
               {isUnrealizedUp ? '+' : ''}₹{fmtMoney(unrealized)}
             </div>
-            <div className="text-xs mt-1 flex items-center gap-1.5">
+            <div className="text-xs mt-2 flex items-center gap-2">
               <span
-                className={`px-1.5 py-0.5 rounded text-[11px] font-semibold ${
+                className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
                   isUnrealizedUp
-                    ? 'bg-market-up-subtle text-market-up'
-                    : 'bg-market-down-subtle text-market-down'
+                    ? 'bg-[#00E676]/15 text-[#00E676] border border-[#00E676]/25'
+                    : 'bg-[#FF385C]/15 text-[#FF385C] border border-[#FF385C]/25'
                 }`}
               >
-                {isUnrealizedUp ? '+' : ''}
-                {fmtPct(unrealizedPct)}%
+                {isUnrealizedUp ? '+' : ''}{fmtPct(unrealizedPct)}%
               </span>
-              <span className="text-text-tertiary text-[11px]">open positions mark</span>
+              <span className="text-slate-500 text-[11px]">unbooked mark</span>
             </div>
           </div>
         </div>
 
         {/* Realized P&L & Fees */}
-        <div className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col justify-between">
-          <div className="flex items-center justify-between text-text-secondary text-xs">
-            <span className="font-label-sm uppercase tracking-wider text-[11px]">
-              Realized Net P&amp;L
-            </span>
-            <span className="material-symbols-outlined text-[18px] text-text-tertiary">
-              receipt
-            </span>
+        <div className="glass-card p-5 rounded-2xl flex flex-col justify-between relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full blur-xl pointer-events-none"></div>
+          <div className="flex items-center justify-between text-slate-400 text-xs">
+            <span className="text-[11px] uppercase tracking-wider font-medium">Realized Net P&amp;L</span>
+            <span className="material-symbols-outlined text-[18px] text-slate-500">receipt</span>
           </div>
-          <div className="mt-space-md">
+          <div className="mt-4">
             <div
-              className={`font-numeric-lg text-numeric-lg font-semibold tracking-tight ${
-                isRealizedUp ? 'text-market-up' : 'text-market-down'
+              className={`text-3xl font-bold font-mono tracking-tight ${
+                isRealizedUp ? 'text-[#00E676]' : 'text-[#FF385C]'
               }`}
             >
               {isRealizedUp ? '+' : ''}₹{fmtMoney(realized)}
             </div>
-            <div className="text-xs text-text-secondary mt-1">
-              Total Brokerage &amp; Taxes Paid: ₹{fmtMoney(fees)}
+            <div className="text-xs text-slate-400 mt-1.5 flex items-center justify-between">
+              <span className="text-[11px] text-slate-500">Fees &amp; Taxes Paid:</span>
+              <span className="font-mono text-slate-300">₹{fmtMoney(fees)}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Open Holdings Table */}
-      <div className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60">
-        <div className="flex items-center justify-between mb-space-md pb-space-sm border-b border-surface-container-low">
+      <div className="glass-card rounded-2xl p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-white/5">
           <div>
-            <h2 className="font-headline-sm text-headline-sm text-text-primary font-semibold">
-              Open Holdings &amp; Cost Basis
+            <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+              Open Positions &amp; Cost Basis
             </h2>
-            <p className="font-body-sm text-body-sm text-text-secondary text-xs">
-              Positions updated using strict weighted-average cost accounting
+            <p className="text-xs text-slate-400 mt-0.5">
+              Positions tracked via strict weighted-average cost accounting
             </p>
           </div>
-          <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-surface-subtle text-text-secondary border border-border-subtle">
-            {portfolio?.positions?.length ?? 0} Active Positions
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold px-3 py-1 rounded-full bg-white/5 text-slate-300 border border-white/10 font-mono">
+              {portfolio?.positions?.length ?? 0} Positions
+            </span>
+          </div>
         </div>
 
         {portfolio?.positions && portfolio.positions.length > 0 ? (
-          <div className="overflow-x-auto -mx-space-md px-space-md">
+          <div className="overflow-x-auto -mx-6 px-6">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-surface-subtle/80 text-text-secondary font-label-sm text-[11px] uppercase tracking-wider h-9">
-                  <th className="py-2 px-3 font-semibold rounded-l-md">Asset &amp; Company</th>
-                  <th className="py-2 px-3 font-semibold text-right">Quantity</th>
-                  <th className="py-2 px-3 font-semibold text-right">Avg Buy Price</th>
-                  <th className="py-2 px-3 font-semibold text-right">Cost Basis</th>
-                  <th className="py-2 px-3 font-semibold text-right">Current Price</th>
-                  <th className="py-2 px-3 font-semibold text-right">Market Value</th>
+                <tr className="border-b border-white/10 text-[11px] font-mono text-slate-400 uppercase tracking-wider h-10">
+                  <th className="py-2 px-3 font-semibold">Asset</th>
+                  <th className="py-2 px-3 font-semibold text-right">Shares</th>
+                  <th className="py-2 px-3 font-semibold text-right">Avg Cost</th>
+                  <th className="py-2 px-3 font-semibold text-right">Total Basis</th>
+                  <th className="py-2 px-3 font-semibold text-right">Mark Price</th>
+                  <th className="py-2 px-3 font-semibold text-right">Current Value</th>
                   <th className="py-2 px-3 font-semibold text-right">Unrealized P&amp;L</th>
-                  <th className="py-2 px-3 font-semibold text-right rounded-r-md">Action</th>
+                  <th className="py-2 px-3 font-semibold text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-container-low font-body-sm text-body-sm text-xs">
+              <tbody className="divide-y divide-white/5 text-xs">
                 {portfolio.positions.map((pos) => {
                   const posUnrealized = toNum(pos.unrealized_pnl);
                   const posReturnPct = toNum(pos.unrealized_return_pct);
@@ -198,60 +202,59 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
                   const matchedAsset = assets.find((a) => a.id === pos.asset_id);
 
                   return (
-                    <tr key={pos.id} className="hover:bg-surface-subtle/60 transition-colors">
-                      <td className="py-3 px-3">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded bg-surface-container-high flex items-center justify-center font-bold text-[11px] text-text-primary shadow-2xs">
+                    <tr key={pos.id} className="hover:bg-white/[0.03] transition-colors group">
+                      <td className="py-4 px-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1E293B] to-[#0F172A] border border-white/10 flex items-center justify-center font-bold text-xs text-white shadow-inner">
                             {pos.symbol.slice(0, 2)}
                           </div>
                           <div className="flex flex-col">
-                            <span className="font-semibold text-text-primary text-sm">
+                            <span className="font-bold text-white text-sm tracking-tight group-hover:text-[#00E676] transition-colors">
                               {pos.symbol}
                             </span>
-                            <span className="text-[11px] text-text-secondary">{pos.name}</span>
+                            <span className="text-[11px] text-slate-400">{pos.name}</span>
                           </div>
                         </div>
                       </td>
 
-                      <td className="py-3 px-3 text-right font-medium text-text-primary">
+                      <td className="py-4 px-3 text-right font-mono font-medium text-white">
                         {toNum(pos.quantity)}
                       </td>
 
-                      <td className="py-3 px-3 text-right font-mono text-text-secondary">
+                      <td className="py-4 px-3 text-right font-mono text-slate-300">
                         ₹{fmtMoney(pos.average_cost)}
                       </td>
 
-                      <td className="py-3 px-3 text-right font-mono text-text-secondary">
+                      <td className="py-4 px-3 text-right font-mono text-slate-400">
                         ₹{fmtMoney(pos.cost_basis)}
                       </td>
 
-                      <td className="py-3 px-3 text-right font-mono font-medium text-text-primary">
+                      <td className="py-4 px-3 text-right font-mono font-medium text-white">
                         ₹{fmtMoney(pos.current_price)}
                       </td>
 
-                      <td className="py-3 px-3 text-right font-mono font-semibold text-text-primary">
+                      <td className="py-4 px-3 text-right font-mono font-semibold text-white">
                         ₹{fmtMoney(pos.market_value)}
                       </td>
 
-                      <td className="py-3 px-3 text-right">
-                        <div className={`font-semibold ${isUp ? 'text-market-up' : 'text-market-down'}`}>
+                      <td className="py-4 px-3 text-right">
+                        <div className={`font-mono font-bold text-sm ${isUp ? 'text-[#00E676]' : 'text-[#FF385C]'}`}>
                           {isUp ? '+' : ''}₹{fmtMoney(posUnrealized)}
                         </div>
                         <div
-                          className={`text-[10px] font-medium ${
-                            isUp ? 'text-market-up' : 'text-market-down'
+                          className={`text-[10px] font-semibold mt-0.5 ${
+                            isUp ? 'text-[#00E676]' : 'text-[#FF385C]'
                           }`}
                         >
-                          {isUp ? '+' : ''}
-                          {fmtPct(posReturnPct)}%
+                          {isUp ? '+' : ''}{fmtPct(posReturnPct)}%
                         </div>
                       </td>
 
-                      <td className="py-3 px-3 text-right">
+                      <td className="py-4 px-3 text-right">
                         <button
                           type="button"
                           onClick={() => matchedAsset && setSelectedAssetForTrade(matchedAsset)}
-                          className="px-3 py-1.5 rounded-lg bg-surface-container hover:bg-primary hover:text-on-primary text-text-primary font-label-md text-xs font-semibold transition-all shadow-2xs"
+                          className="px-3.5 py-1.5 rounded-lg bg-white/5 hover:bg-[#00E676] hover:text-black hover:border-transparent text-slate-200 border border-white/10 text-xs font-semibold transition-all shadow-sm active:scale-95"
                         >
                           Trade
                         </button>
@@ -263,13 +266,13 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
             </table>
           </div>
         ) : (
-          <div className="py-12 text-center text-text-tertiary text-xs">
-            <span className="material-symbols-outlined text-[32px] text-text-tertiary mx-auto mb-2 block">
-              pie_chart
-            </span>
-            <p className="font-medium text-text-secondary text-sm">No active equity positions</p>
-            <p className="mt-1">
-              Use your ₹1,00,000.00 virtual cash to buy shares from the Markets tab.
+          <div className="py-16 text-center text-slate-500 text-xs">
+            <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-3 text-slate-400">
+              <span className="material-symbols-outlined text-[28px]">pie_chart</span>
+            </div>
+            <p className="font-semibold text-white text-base">No active equity positions</p>
+            <p className="mt-1 text-slate-400 max-w-sm mx-auto">
+              You have ₹1,00,000.00 virtual cash available to allocate across NSE top equities.
             </p>
           </div>
         )}
@@ -277,40 +280,42 @@ export const PortfolioPage: React.FC<PortfolioPageProps> = ({
 
       {/* Asset Allocation Breakdown */}
       {portfolio?.allocations && portfolio.allocations.length > 0 && (
-        <div className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 space-y-4">
-          <div className="flex items-center justify-between pb-space-sm border-b border-surface-container-low">
+        <div className="glass-card rounded-2xl p-6 space-y-5">
+          <div className="flex items-center justify-between pb-3 border-b border-white/5">
             <div>
-              <h2 className="font-headline-sm text-headline-sm text-text-primary font-semibold">
-                Portfolio Allocation Model
+              <h2 className="text-base font-bold text-white tracking-tight">
+                Capital Diversification Breakdown
               </h2>
-              <p className="font-body-sm text-body-sm text-text-secondary text-xs">
-                Asset diversification across cash reserves and active equities
+              <p className="text-xs text-slate-400 mt-0.5">
+                Relative portfolio weights across cash reserves and active equities
               </p>
             </div>
-            <span className="font-label-sm text-[11px] text-primary font-semibold uppercase">
-              Capital Exposure
+            <span className="text-[11px] font-mono text-[#00E676] uppercase tracking-wider font-semibold">
+              Exposure Model
             </span>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-space-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {portfolio.allocations.map((alloc) => (
               <div
                 key={alloc.symbol}
-                className="bg-surface-container-low p-3 rounded-lg border border-surface-container-high/60 flex items-center justify-between"
+                className="bg-[#111726]/60 p-4 rounded-xl border border-white/5 flex flex-col justify-between hover:border-white/10 transition-all"
               >
-                <div>
-                  <div className="font-bold text-text-primary text-xs">{alloc.symbol}</div>
-                  <div className="text-[10px] text-text-secondary truncate max-w-[120px]">
-                    {alloc.name}
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="font-semibold text-text-primary text-xs">
-                    ₹{fmtMoney(alloc.market_value, 0)}
-                  </div>
-                  <div className="text-[10px] text-primary font-bold">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-bold text-white text-sm">{alloc.symbol}</span>
+                  <span className="font-mono text-xs font-bold text-[#00E676]">
                     {alloc.percentage.toFixed(1)}%
-                  </div>
+                  </span>
+                </div>
+                <div className="text-[11px] text-slate-400 truncate mb-3">{alloc.name}</div>
+                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-[#00E676] to-[#00F0FF] rounded-full"
+                    style={{ width: `${Math.min(100, alloc.percentage)}%` }}
+                  ></div>
+                </div>
+                <div className="mt-2 text-right text-xs font-mono text-slate-300">
+                  ₹{fmtMoney(alloc.market_value, 0)}
                 </div>
               </div>
             ))}

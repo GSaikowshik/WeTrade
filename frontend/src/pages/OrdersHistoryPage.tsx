@@ -44,36 +44,36 @@ export const OrdersHistoryPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col w-full pb-10 space-y-space-lg animate-in fade-in duration-150">
+    <div className="flex flex-col w-full pb-14 space-y-6 animate-in fade-in duration-200">
       {/* Top Header & Tab Toggle */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-sm pb-space-xs border-b border-surface-container-high/60">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-white/5">
         <div>
-          <div className="flex items-center gap-space-xs mb-1">
-            <span className="font-label-sm text-[11px] text-primary uppercase font-semibold tracking-wider">
-              Execution Engine
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#00E676] font-semibold">
+              Execution Logs
             </span>
-            <span className="text-text-tertiary">/</span>
-            <span className="font-label-sm text-[11px] text-text-secondary uppercase tracking-wider">
+            <span className="text-white/20">/</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
               Audit Trails
             </span>
           </div>
-          <h1 className="font-headline-lg text-headline-lg font-semibold text-text-primary tracking-tight">
-            Orders &amp; Transaction Ledger
+          <h1 className="text-3xl font-extrabold text-white tracking-tight">
+            Orders &amp; Ledger
           </h1>
-          <p className="font-body-sm text-body-sm text-text-secondary text-xs mt-1">
-            Complete audit trail of simulated order states, execution fills, and append-only cash movements.
+          <p className="text-xs text-slate-400 mt-1">
+            Complete audit trail of simulated order states, execution fills, and immutable cash balance entries.
           </p>
         </div>
 
         {/* Tab Toggle */}
-        <div className="flex items-center bg-surface-subtle p-0.5 rounded-lg border border-surface-container-high/40 self-start sm:self-auto">
+        <div className="flex items-center bg-[#111726] p-1 rounded-xl border border-white/10 self-start sm:self-auto shadow-inner">
           <button
             type="button"
             onClick={() => setActiveTab('orders')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
               activeTab === 'orders'
-                ? 'bg-surface-card text-text-primary shadow-xs'
-                : 'text-text-secondary hover:text-text-primary'
+                ? 'bg-[#00E676] text-black shadow-glow-green font-bold'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             <span className="material-symbols-outlined text-[16px]">receipt_long</span>
@@ -82,32 +82,33 @@ export const OrdersHistoryPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveTab('ledger')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold transition-colors ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all ${
               activeTab === 'ledger'
-                ? 'bg-surface-card text-text-primary shadow-xs'
-                : 'text-text-secondary hover:text-text-primary'
+                ? 'bg-[#00E676] text-black shadow-glow-green font-bold'
+                : 'text-slate-400 hover:text-white'
             }`}
           >
             <span className="material-symbols-outlined text-[16px]">account_balance</span>
-            <span>Immutable Ledger ({ledger.length})</span>
+            <span>Cash Ledger ({ledger.length})</span>
           </button>
         </div>
       </div>
 
       {/* Main Table Card */}
-      <div className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60">
+      <div className="glass-card rounded-2xl p-6">
         {loading ? (
-          <div className="py-16 text-center text-text-tertiary text-xs">
-            Loading audit records...
+          <div className="py-20 text-center text-slate-500 text-xs flex flex-col items-center justify-center">
+            <div className="w-8 h-8 rounded-full border-2 border-[#00E676]/30 border-t-[#00E676] animate-spin mb-3"></div>
+            <span>Fetching audit records...</span>
           </div>
         ) : activeTab === 'orders' ? (
           orders.length > 0 ? (
-            <div className="overflow-x-auto -mx-space-md px-space-md">
+            <div className="overflow-x-auto -mx-6 px-6">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-surface-subtle/80 text-text-secondary font-label-sm text-[11px] uppercase tracking-wider h-9">
-                    <th className="py-2 px-3 font-semibold rounded-l-md">Order ID</th>
-                    <th className="py-2 px-3 font-semibold">Submitted At</th>
+                  <tr className="border-b border-white/10 text-[11px] font-mono text-slate-400 uppercase tracking-wider h-10">
+                    <th className="py-2 px-3 font-semibold">Order ID</th>
+                    <th className="py-2 px-3 font-semibold">Timestamp</th>
                     <th className="py-2 px-3 font-semibold">Asset</th>
                     <th className="py-2 px-3 font-semibold">Side</th>
                     <th className="py-2 px-3 font-semibold">Type</th>
@@ -116,10 +117,10 @@ export const OrdersHistoryPage: React.FC = () => {
                     <th className="py-2 px-3 font-semibold text-right">Fill Price</th>
                     <th className="py-2 px-3 font-semibold text-right">Fees</th>
                     <th className="py-2 px-3 font-semibold text-right">Status</th>
-                    <th className="py-2 px-3 font-semibold text-right rounded-r-md">Action</th>
+                    <th className="py-2 px-3 font-semibold text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-surface-container-low font-body-sm text-body-sm text-xs">
+                <tbody className="divide-y divide-white/5 text-xs">
                   {orders.map((ord) => {
                     const isFilled = ord.status === 'FILLED';
                     const isRejected = ord.status === 'REJECTED';
@@ -127,9 +128,9 @@ export const OrdersHistoryPage: React.FC = () => {
                     const isBuy = ord.side === 'BUY';
 
                     return (
-                      <tr key={ord.id} className="hover:bg-surface-subtle/60 transition-colors">
-                        <td className="py-3 px-3 font-mono text-text-tertiary">#{ord.id}</td>
-                        <td className="py-3 px-3 text-text-secondary text-[11px]">
+                      <tr key={ord.id} className="hover:bg-white/[0.03] transition-colors">
+                        <td className="py-3.5 px-3 font-mono text-slate-400">#{ord.id}</td>
+                        <td className="py-3.5 px-3 text-slate-400 text-[11px] font-mono">
                           {new Date(ord.created_at).toLocaleString('en-IN', {
                             month: 'short',
                             day: 'numeric',
@@ -137,60 +138,71 @@ export const OrdersHistoryPage: React.FC = () => {
                             minute: '2-digit',
                           })}
                         </td>
-                        <td className="py-3 px-3 font-bold text-text-primary">{ord.asset_symbol}</td>
-                        <td className="py-3 px-3">
+                        <td className="py-3.5 px-3 font-bold text-white tracking-tight">{ord.asset_symbol}</td>
+                        <td className="py-3.5 px-3">
                           <span
-                            className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-bold tracking-wider ${
                               isBuy
-                                ? 'bg-market-up-subtle text-market-up'
-                                : 'bg-market-down-subtle text-market-down'
+                                ? 'bg-[#00E676]/15 text-[#00E676] border border-[#00E676]/30'
+                                : 'bg-[#FF385C]/15 text-[#FF385C] border border-[#FF385C]/30'
                             }`}
                           >
                             {ord.side}
                           </span>
                         </td>
-                        <td className="py-3 px-3 text-text-secondary font-medium">
+                        <td className="py-3.5 px-3 text-slate-300 font-mono font-medium">
                           {ord.order_type}
                         </td>
-                        <td className="py-3 px-3 text-right font-medium text-text-primary">
+                        <td className="py-3.5 px-3 text-right font-medium text-white font-mono">
                           {ord.quantity}
                         </td>
-                        <td className="py-3 px-3 text-right text-text-secondary font-mono">
+                        <td className="py-3.5 px-3 text-right text-slate-400 font-mono">
                           {ord.limit_price ? `₹${fmtMoney(ord.limit_price)}` : '—'}
                         </td>
-                        <td className="py-3 px-3 text-right font-semibold text-text-primary font-mono">
+                        <td className="py-3.5 px-3 text-right font-semibold text-white font-mono">
                           {ord.average_fill_price ? `₹${fmtMoney(ord.average_fill_price)}` : '—'}
                         </td>
-                        <td className="py-3 px-3 text-right text-text-secondary font-mono">
+                        <td className="py-3.5 px-3 text-right text-slate-400 font-mono">
                           ₹{fmtMoney(ord.fees_paid)}
                         </td>
-                        <td className="py-3 px-3 text-right">
+                        <td className="py-3.5 px-3 text-right">
                           <span
-                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold ${
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase ${
                               isFilled
-                                ? 'bg-market-up-subtle text-market-up'
+                                ? 'bg-[#00E676]/10 text-[#00E676] border border-[#00E676]/25'
                                 : isRejected
-                                ? 'bg-market-down-subtle text-market-down'
+                                ? 'bg-[#FF385C]/10 text-[#FF385C] border border-[#FF385C]/25'
                                 : isPending
-                                ? 'bg-amber-100 text-amber-800'
-                                : 'bg-surface-container-low text-text-secondary'
+                                ? 'bg-amber-400/10 text-amber-400 border border-amber-400/25'
+                                : 'bg-white/5 text-slate-400'
                             }`}
                           >
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                isFilled
+                                  ? 'bg-[#00E676]'
+                                  : isRejected
+                                  ? 'bg-[#FF385C]'
+                                  : isPending
+                                  ? 'bg-amber-400 animate-pulse'
+                                  : 'bg-slate-400'
+                              }`}
+                            ></span>
                             {ord.status}
                           </span>
                           {ord.rejection_reason && (
-                            <div className="text-[10px] text-market-down mt-0.5 max-w-xs text-right">
+                            <div className="text-[10px] text-[#FF385C] mt-1 max-w-xs text-right truncate">
                               {ord.rejection_reason}
                             </div>
                           )}
                         </td>
-                        <td className="py-3 px-3 text-right">
+                        <td className="py-3.5 px-3 text-right">
                           {isPending && (
                             <button
                               type="button"
                               onClick={() => handleCancelOrder(ord.id)}
                               disabled={cancellingId === ord.id}
-                              className="px-2.5 py-1 rounded bg-market-down-subtle hover:bg-market-down text-market-down hover:text-white font-label-sm text-xs font-semibold transition-all disabled:opacity-50"
+                              className="px-3 py-1 rounded-lg bg-[#FF385C]/15 hover:bg-[#FF385C] text-[#FF385C] hover:text-white border border-[#FF385C]/30 text-xs font-semibold transition-all disabled:opacity-50 active:scale-95"
                             >
                               {cancellingId === ord.id ? 'Cancelling...' : 'Cancel'}
                             </button>
@@ -203,12 +215,12 @@ export const OrdersHistoryPage: React.FC = () => {
               </table>
             </div>
           ) : (
-            <div className="py-12 text-center text-text-tertiary text-xs">
-              <span className="material-symbols-outlined text-[32px] text-text-tertiary mx-auto mb-2 block">
-                receipt_long
-              </span>
-              <p className="font-medium text-text-secondary text-sm">No orders placed yet</p>
-              <p className="mt-1">
+            <div className="py-16 text-center text-slate-500 text-xs">
+              <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-3 text-slate-400">
+                <span className="material-symbols-outlined text-[28px]">receipt_long</span>
+              </div>
+              <p className="font-semibold text-white text-base">No orders placed yet</p>
+              <p className="mt-1 text-slate-400 max-w-sm mx-auto">
                 Explore the Markets terminal to place your first simulated market or limit order.
               </p>
             </div>
@@ -216,27 +228,27 @@ export const OrdersHistoryPage: React.FC = () => {
         ) : (
           /* Ledger Table */
           ledger.length > 0 ? (
-            <div className="overflow-x-auto -mx-space-md px-space-md">
+            <div className="overflow-x-auto -mx-6 px-6">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-surface-subtle/80 text-text-secondary font-label-sm text-[11px] uppercase tracking-wider h-9">
-                    <th className="py-2 px-3 font-semibold rounded-l-md">Entry ID</th>
+                  <tr className="border-b border-white/10 text-[11px] font-mono text-slate-400 uppercase tracking-wider h-10">
+                    <th className="py-2 px-3 font-semibold">Entry ID</th>
                     <th className="py-2 px-3 font-semibold">Timestamp</th>
                     <th className="py-2 px-3 font-semibold">Movement Type</th>
                     <th className="py-2 px-3 font-semibold">Description</th>
                     <th className="py-2 px-3 font-semibold text-right">Signed Amount</th>
-                    <th className="py-2 px-3 font-semibold text-right rounded-r-md">Balance After</th>
+                    <th className="py-2 px-3 font-semibold text-right">Resulting Balance</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-surface-container-low font-body-sm text-body-sm text-xs">
+                <tbody className="divide-y divide-white/5 text-xs">
                   {ledger.map((entry) => {
                     const amount = toNum(entry.amount);
                     const isCredit = amount >= 0;
 
                     return (
-                      <tr key={entry.id} className="hover:bg-surface-subtle/60 transition-colors">
-                        <td className="py-3 px-3 font-mono text-text-tertiary">#{entry.id}</td>
-                        <td className="py-3 px-3 text-text-secondary text-[11px]">
+                      <tr key={entry.id} className="hover:bg-white/[0.03] transition-colors">
+                        <td className="py-3.5 px-3 font-mono text-slate-400">#{entry.id}</td>
+                        <td className="py-3.5 px-3 text-slate-400 text-[11px] font-mono">
                           {new Date(entry.created_at).toLocaleString('en-IN', {
                             month: 'short',
                             day: 'numeric',
@@ -244,20 +256,20 @@ export const OrdersHistoryPage: React.FC = () => {
                             minute: '2-digit',
                           })}
                         </td>
-                        <td className="py-3 px-3">
-                          <span className="px-2 py-0.5 rounded bg-surface-container-low text-text-primary text-[10px] font-semibold uppercase">
+                        <td className="py-3.5 px-3">
+                          <span className="px-2.5 py-1 rounded-md bg-white/5 border border-white/10 text-slate-300 text-[10px] font-mono font-semibold uppercase">
                             {entry.entry_type}
                           </span>
                         </td>
-                        <td className="py-3 px-3 text-text-secondary">
+                        <td className="py-3.5 px-3 text-slate-300">
                           {entry.metadata_json || entry.entry_type}
                         </td>
-                        <td className="py-3 px-3 text-right font-mono font-semibold">
-                          <span className={isCredit ? 'text-market-up' : 'text-market-down'}>
+                        <td className="py-3.5 px-3 text-right font-mono font-bold">
+                          <span className={isCredit ? 'text-[#00E676]' : 'text-[#FF385C]'}>
                             {isCredit ? '+' : ''}₹{fmtMoney(amount)}
                           </span>
                         </td>
-                        <td className="py-3 px-3 text-right font-mono font-semibold text-text-primary">
+                        <td className="py-3.5 px-3 text-right font-mono font-bold text-white">
                           ₹{fmtMoney(entry.resulting_balance)}
                         </td>
                       </tr>
@@ -267,12 +279,12 @@ export const OrdersHistoryPage: React.FC = () => {
               </table>
             </div>
           ) : (
-            <div className="py-12 text-center text-text-tertiary text-xs">
-              <span className="material-symbols-outlined text-[32px] text-text-tertiary mx-auto mb-2 block">
-                account_balance
-              </span>
-              <p className="font-medium text-text-secondary text-sm">Ledger is empty</p>
-              <p className="mt-1">
+            <div className="py-16 text-center text-slate-500 text-xs">
+              <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-3 text-slate-400">
+                <span className="material-symbols-outlined text-[28px]">account_balance</span>
+              </div>
+              <p className="font-semibold text-white text-base">Ledger is empty</p>
+              <p className="mt-1 text-slate-400 max-w-sm mx-auto">
                 Your initial deposit of ₹1,00,000.00 will appear here upon registration.
               </p>
             </div>

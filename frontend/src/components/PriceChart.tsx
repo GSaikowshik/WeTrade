@@ -22,7 +22,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
 
   if (!bars || bars.length === 0) {
     return (
-      <div className="h-72 w-full flex items-center justify-center bg-surface-card rounded-xl border border-surface-container-high text-text-tertiary">
+      <div className="h-80 w-full flex items-center justify-center bg-[#0B101E]/80 rounded-3xl border border-white/5 text-slate-500 text-xs">
         No price history available for {symbol}.
       </div>
     );
@@ -67,46 +67,46 @@ export const PriceChart: React.FC<PriceChartProps> = ({
     .join(' ');
 
   return (
-    <div className="bg-surface-card rounded-xl border border-surface-container-high/60 shadow-[0_1px_8px_rgba(0,0,0,0.04)] p-space-md flex flex-col space-y-3">
+    <div className="glass-card rounded-3xl p-6 flex flex-col space-y-4">
       {/* Chart Top Bar Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-surface-container-low">
-        <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-          <span className="font-headline-sm text-headline-sm font-semibold text-text-primary">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/5">
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="text-xl font-black text-white tracking-tight">
             {symbol}
           </span>
-          <div className="flex items-center gap-1.5 text-xs">
-            <span className="font-numeric-md font-semibold text-text-primary">
+          <div className="flex items-center gap-2 font-mono">
+            <span className="text-xl font-black text-white">
               ₹{fmtMoney(activeClose)}
             </span>
             <span
-              className={`font-semibold px-1.5 py-0.5 rounded text-[11px] ${
-                isUpBar ? 'bg-market-up-subtle text-market-up' : 'bg-market-down-subtle text-market-down'
+              className={`font-bold px-2 py-0.5 rounded-lg text-xs ${
+                isUpBar
+                  ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
+                  : 'bg-rose-500/15 text-rose-400 border border-rose-500/20'
               }`}
             >
               {isUpBar ? '+' : ''}₹{fmtMoney(activeClose - activeOpen)} ({fmtPct(barPctChange)}%)
             </span>
           </div>
 
-          <div className="hidden md:flex items-center gap-3 text-[11px] text-text-secondary pl-2 border-l border-surface-container-high">
-            <span>O: <strong className="text-text-primary font-mono">{fmtMoney(activeOpen)}</strong></span>
-            <span>H: <strong className="text-text-primary font-mono">{fmtMoney(activeHigh)}</strong></span>
-            <span>L: <strong className="text-text-primary font-mono">{fmtMoney(activeLow)}</strong></span>
-            <span>C: <strong className="text-text-primary font-mono">{fmtMoney(activeClose)}</strong></span>
-            <span>Vol: <strong className="text-text-primary font-mono">{(activeVol / 1000).toFixed(0)}k</strong></span>
+          <div className="hidden md:flex items-center gap-3 text-xs text-slate-400 pl-3 border-l border-white/10 font-mono">
+            <span>O: <strong className="text-white">{fmtMoney(activeOpen)}</strong></span>
+            <span>H: <strong className="text-white">{fmtMoney(activeHigh)}</strong></span>
+            <span>L: <strong className="text-white">{fmtMoney(activeLow)}</strong></span>
+            <span>Vol: <strong className="text-white">{(activeVol / 1000).toFixed(0)}k</strong></span>
           </div>
         </div>
 
-        {/* Resolution Selector & Chart View Toggle */}
+        {/* View Toggle & Intervals */}
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          {/* Chart mode toggle */}
-          <div className="flex items-center bg-surface-subtle p-0.5 rounded-lg border border-surface-container-high/40">
+          <div className="flex items-center bg-black/40 p-1 rounded-xl border border-white/10 text-xs">
             <button
               type="button"
               onClick={() => setChartMode('candles')}
-              className={`px-2 py-0.5 rounded text-xs font-medium transition-colors flex items-center gap-1 ${
+              className={`px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1 ${
                 chartMode === 'candles'
-                  ? 'bg-surface-card text-text-primary shadow-2xs font-semibold'
-                  : 'text-text-secondary hover:text-text-primary'
+                  ? 'bg-white/10 text-white shadow-xs'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               <span className="material-symbols-outlined text-[14px]">candlestick_chart</span>
@@ -115,10 +115,10 @@ export const PriceChart: React.FC<PriceChartProps> = ({
             <button
               type="button"
               onClick={() => setChartMode('line')}
-              className={`px-2 py-0.5 rounded text-xs font-medium transition-colors flex items-center gap-1 ${
+              className={`px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1 ${
                 chartMode === 'line'
-                  ? 'bg-surface-card text-text-primary shadow-2xs font-semibold'
-                  : 'text-text-secondary hover:text-text-primary'
+                  ? 'bg-white/10 text-white shadow-xs'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
               <span className="material-symbols-outlined text-[14px]">show_chart</span>
@@ -126,17 +126,16 @@ export const PriceChart: React.FC<PriceChartProps> = ({
             </button>
           </div>
 
-          {/* Timeframe intervals */}
-          <div className="flex items-center bg-surface-subtle p-0.5 rounded-lg border border-surface-container-high/40">
+          <div className="flex items-center bg-black/40 p-1 rounded-xl border border-white/10 text-xs font-mono">
             {['15m', '1H', '1D'].map((res) => (
               <button
                 key={res}
                 type="button"
                 onClick={() => onIntervalChange(res)}
-                className={`px-2.5 py-0.5 rounded font-label-sm text-xs font-semibold transition-colors ${
+                className={`px-3 py-1 rounded-lg font-bold transition-all ${
                   interval === res
-                    ? 'bg-surface-card text-text-primary shadow-2xs'
-                    : 'text-text-secondary hover:text-text-primary'
+                    ? 'bg-emerald-500 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
+                    : 'text-slate-400 hover:text-white'
                 }`}
               >
                 {res}
@@ -146,7 +145,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
         </div>
       </div>
 
-      {/* SVG Interactive Chart Canvas */}
+      {/* SVG Neon Chart Canvas */}
       <div className="relative w-full overflow-x-auto select-none">
         <svg
           viewBox={`0 0 ${chartWidth} ${chartHeight + volumeHeight + 25}`}
@@ -154,10 +153,13 @@ export const PriceChart: React.FC<PriceChartProps> = ({
           onMouseLeave={() => setHoverIndex(null)}
         >
           <defs>
-            <linearGradient id="chartLineGrad" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor="#00422d" stopOpacity="0.12" />
-              <stop offset="100%" stopColor="#00422d" stopOpacity="0.0" />
-            </linearGradient>
+            <filter id="candleGlow">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
           </defs>
 
           {/* Gridlines */}
@@ -171,13 +173,13 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   y1={y}
                   x2={chartWidth - paddingX}
                   y2={y}
-                  stroke="#E5E8E2"
-                  strokeDasharray="3 3"
+                  stroke="rgba(255, 255, 255, 0.05)"
+                  strokeDasharray="4 4"
                 />
                 <text
-                  x={chartWidth - paddingX + 5}
+                  x={chartWidth - paddingX + 6}
                   y={y + 3}
-                  fill="#9CA3AF"
+                  fill="#64748B"
                   fontSize="10"
                   fontFamily="Geist, monospace"
                 >
@@ -187,13 +189,13 @@ export const PriceChart: React.FC<PriceChartProps> = ({
             );
           })}
 
-          {/* Volume separator */}
+          {/* Volume Separator */}
           <line
             x1={paddingX}
             y1={chartHeight}
             x2={chartWidth - paddingX}
             y2={chartHeight}
-            stroke="#E5E8E2"
+            stroke="rgba(255, 255, 255, 0.06)"
           />
 
           {/* Volume Bars */}
@@ -209,13 +211,13 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                 y={chartHeight + volumeHeight - vHeight}
                 width={candleWidth}
                 height={vHeight}
-                fill={isUp ? '#0F766E' : '#B91C1C'}
-                opacity="0.35"
+                fill={isUp ? '#00E676' : '#FF385C'}
+                opacity="0.3"
               />
             );
           })}
 
-          {/* Candlestick / Line Chart Mode */}
+          {/* Candlestick Mode */}
           {chartMode === 'candles' ? (
             bars.map((bar, i) => {
               const x = paddingX + i * candleStep + candleStep / 2;
@@ -232,7 +234,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
 
               const bodyTop = Math.min(yOpen, yClose);
               const bodyHeight = Math.max(Math.abs(yClose - yOpen), 2);
-              const candleColor = isUp ? '#0F766E' : '#B91C1C';
+              const color = isUp ? '#00E676' : '#FF385C';
 
               return (
                 <g
@@ -240,23 +242,22 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   className="cursor-pointer"
                   onMouseEnter={() => setHoverIndex(i)}
                 >
-                  {/* High/Low Wick */}
                   <line
                     x1={x}
                     y1={yHigh}
                     x2={x}
                     y2={yLow}
-                    stroke={candleColor}
+                    stroke={color}
                     strokeWidth="1.2"
                   />
-                  {/* Candle Body */}
                   <rect
                     x={x - candleWidth / 2}
                     y={bodyTop}
                     width={candleWidth}
                     height={bodyHeight}
-                    fill={isUp ? '#0F766E' : '#B91C1C'}
-                    rx="1"
+                    fill={color}
+                    rx="1.5"
+                    filter="url(#candleGlow)"
                   />
                 </g>
               );
@@ -265,23 +266,24 @@ export const PriceChart: React.FC<PriceChartProps> = ({
             <g>
               <polyline
                 fill="none"
-                stroke="#00422d"
-                strokeWidth="2"
+                stroke="#00E676"
+                strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                filter="url(#candleGlow)"
                 points={linePoints}
               />
             </g>
           )}
 
-          {/* Hover Crosshair */}
+          {/* Crosshair Hover */}
           {hoverIndex !== null && (
             <line
               x1={paddingX + hoverIndex * candleStep + candleStep / 2}
               y1={10}
               x2={paddingX + hoverIndex * candleStep + candleStep / 2}
               y2={chartHeight + volumeHeight}
-              stroke="#545F73"
+              stroke="rgba(255, 255, 255, 0.3)"
               strokeDasharray="2 2"
               strokeWidth="1"
             />
@@ -289,14 +291,18 @@ export const PriceChart: React.FC<PriceChartProps> = ({
         </svg>
       </div>
 
-      {/* Chart Footer Attribution */}
-      <div className="pt-2 border-t border-surface-container-low flex flex-col sm:flex-row items-center justify-between text-xs text-text-tertiary">
-        <span className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-market-up"></span>
+      {/* Chart Footer Notice */}
+      <div className="pt-2 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 font-mono">
+        <span className="flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
           <span>We Trade Seeded Feed • Delayed simulated OHLCV data</span>
         </span>
-        <span className="text-[11px] font-mono">
-          Last candle timestamp: {new Date(activeBar.timestamp).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}
+        <span className="text-[11px]">
+          {new Date(activeBar.timestamp).toLocaleDateString('en-IN', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+          })}
         </span>
       </div>
     </div>

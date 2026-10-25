@@ -104,44 +104,45 @@ export const TradeJournalPage: React.FC<TradeJournalPageProps> = ({ assets }) =>
   };
 
   return (
-    <div className="flex flex-col w-full pb-10 space-y-space-lg animate-in fade-in duration-150">
+    <div className="flex flex-col w-full pb-14 space-y-6 animate-in fade-in duration-200">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-sm pb-space-xs border-b border-surface-container-high/60">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-white/5">
         <div>
-          <div className="flex items-center gap-space-xs mb-1">
-            <span className="font-label-sm text-[11px] text-primary uppercase font-semibold tracking-wider">
-              Trader Psychology
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-[#00E676] font-semibold">
+              Psychology &amp; Discipline
             </span>
-            <span className="text-text-tertiary">/</span>
-            <span className="font-label-sm text-[11px] text-text-secondary uppercase tracking-wider">
-              Reflection Log
+            <span className="text-white/20">/</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
+              Trade Reflections
             </span>
           </div>
-          <h1 className="font-headline-lg text-headline-lg font-semibold text-text-primary tracking-tight">
+          <h1 className="text-3xl font-extrabold text-white tracking-tight">
             Trade Journal
           </h1>
-          <p className="font-body-sm text-body-sm text-text-secondary text-xs mt-1">
-            Eliminate emotional bias: document your entry rationale, risk-to-reward ratio, stop targets, and post-trade learnings.
+          <p className="text-xs text-slate-400 mt-1">
+            Eliminate emotional bias: document setups, risk-reward ratios, stop targets, and post-trade learnings.
           </p>
         </div>
 
         <button
           type="button"
           onClick={handleOpenCreate}
-          className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-sm self-start sm:self-auto"
+          className="px-4 py-2.5 rounded-xl bg-[#00E676] hover:bg-[#00c864] text-black font-bold text-xs transition-all flex items-center gap-2 shadow-glow-green active:scale-95 self-start sm:self-auto"
         >
           <span className="material-symbols-outlined text-[18px]">edit_note</span>
-          <span>New Journal Entry</span>
+          <span>New Journal Note</span>
         </button>
       </div>
 
       {/* Main Entries Grid */}
       {loading ? (
-        <div className="py-16 text-center text-text-tertiary text-xs">
-          Loading journal reflections...
+        <div className="py-20 text-center text-slate-500 text-xs flex flex-col items-center justify-center">
+          <div className="w-8 h-8 rounded-full border-2 border-[#00E676]/30 border-t-[#00E676] animate-spin mb-3"></div>
+          <span>Loading journal reflections...</span>
         </div>
       ) : entries.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {entries.map((entry) => {
             const risk =
               entry.planned_entry && entry.planned_stop
@@ -156,19 +157,19 @@ export const TradeJournalPage: React.FC<TradeJournalPageProps> = ({ assets }) =>
             return (
               <div
                 key={entry.id}
-                className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col justify-between space-y-3"
+                className="glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4 hover:border-white/20 transition-all group"
               >
                 <div>
-                  <div className="flex items-center justify-between pb-2 border-b border-surface-container-low">
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded bg-surface-container-high flex items-center justify-center font-bold text-[11px] text-text-primary shadow-2xs">
+                  <div className="flex items-center justify-between pb-3 border-b border-white/5">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#1E293B] to-[#0F172A] border border-white/10 flex items-center justify-center font-bold text-xs text-white shadow-inner">
                         {entry.asset_symbol?.slice(0, 2) || 'EQ'}
                       </div>
                       <div>
-                        <span className="font-bold text-text-primary text-sm">
+                        <span className="font-bold text-white text-sm tracking-tight">
                           {entry.asset_symbol || 'NSE Instrument'}
                         </span>
-                        <div className="text-[10px] text-text-tertiary">
+                        <div className="text-[10px] font-mono text-slate-500">
                           {new Date(entry.created_at).toLocaleDateString('en-IN', {
                             month: 'short',
                             day: 'numeric',
@@ -178,16 +179,16 @@ export const TradeJournalPage: React.FC<TradeJournalPageProps> = ({ assets }) =>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-2">
                       {rrRatio && (
-                        <span className="px-2 py-0.5 rounded bg-primary-container/20 text-primary text-[10px] font-bold">
+                        <span className="px-2.5 py-0.5 rounded-full bg-[#00E676]/10 border border-[#00E676]/25 text-[#00E676] text-[10px] font-mono font-bold">
                           R:R {rrRatio}:1
                         </span>
                       )}
                       <button
                         type="button"
                         onClick={() => handleOpenEdit(entry)}
-                        className="p-1 rounded text-text-tertiary hover:text-text-primary hover:bg-surface-container-low"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
                         title="Edit Entry"
                       >
                         <span className="material-symbols-outlined text-[16px]">edit</span>
@@ -195,7 +196,7 @@ export const TradeJournalPage: React.FC<TradeJournalPageProps> = ({ assets }) =>
                       <button
                         type="button"
                         onClick={() => handleDelete(entry.id)}
-                        className="p-1 rounded text-text-tertiary hover:text-market-down hover:bg-market-down-subtle"
+                        className="p-1.5 rounded-lg text-slate-400 hover:text-[#FF385C] hover:bg-[#FF385C]/10 transition-colors"
                         title="Delete Entry"
                       >
                         <span className="material-symbols-outlined text-[16px]">delete</span>
@@ -204,39 +205,33 @@ export const TradeJournalPage: React.FC<TradeJournalPageProps> = ({ assets }) =>
                   </div>
 
                   {/* Thesis Body */}
-                  <div className="mt-2 text-xs">
-                    <span className="text-[10px] uppercase font-semibold text-text-tertiary block mb-0.5">
-                      Trade Thesis &amp; Rationale
+                  <div className="mt-3 text-xs">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-1">
+                      Thesis &amp; Setup Context
                     </span>
-                    <p className="text-text-primary leading-relaxed whitespace-pre-wrap">
+                    <p className="text-slate-200 leading-relaxed whitespace-pre-wrap text-sm">
                       {entry.thesis}
                     </p>
                   </div>
 
                   {/* Strategy Targets Strip */}
                   {(entry.planned_entry || entry.planned_stop || entry.planned_target) && (
-                    <div className="mt-3 grid grid-cols-3 gap-2 p-2 rounded-lg bg-surface-container-low text-xs font-mono">
+                    <div className="mt-4 grid grid-cols-3 gap-2 p-3 rounded-xl bg-[#070A11]/60 border border-white/5 text-xs font-mono">
                       <div>
-                        <span className="text-[10px] uppercase text-text-tertiary block">
-                          Planned Entry
-                        </span>
-                        <span className="font-semibold text-text-primary">
+                        <span className="text-[10px] uppercase text-slate-500 block">Entry</span>
+                        <span className="font-semibold text-white">
                           {entry.planned_entry ? `₹${fmtMoney(entry.planned_entry)}` : '—'}
                         </span>
                       </div>
                       <div>
-                        <span className="text-[10px] uppercase text-text-tertiary block">
-                          Stop Target
-                        </span>
-                        <span className="font-semibold text-market-down">
+                        <span className="text-[10px] uppercase text-slate-500 block">Stop Loss</span>
+                        <span className="font-semibold text-[#FF385C]">
                           {entry.planned_stop ? `₹${fmtMoney(entry.planned_stop)}` : '—'}
                         </span>
                       </div>
                       <div>
-                        <span className="text-[10px] uppercase text-text-tertiary block">
-                          Profit Target
-                        </span>
-                        <span className="font-semibold text-market-up">
+                        <span className="text-[10px] uppercase text-slate-500 block">Target</span>
+                        <span className="font-semibold text-[#00E676]">
                           {entry.planned_target ? `₹${fmtMoney(entry.planned_target)}` : '—'}
                         </span>
                       </div>
@@ -245,21 +240,19 @@ export const TradeJournalPage: React.FC<TradeJournalPageProps> = ({ assets }) =>
 
                   {/* Post-Trade Review Notes */}
                   {(entry.exit_reason || entry.lesson_learned) && (
-                    <div className="mt-3 pt-2 border-t border-surface-container-low text-xs space-y-1.5">
+                    <div className="mt-4 pt-3 border-t border-white/5 text-xs space-y-2">
                       {entry.exit_reason && (
-                        <div>
-                          <span className="text-[10px] font-semibold text-text-tertiary block">
-                            Exit Trigger:
-                          </span>
-                          <span className="text-text-secondary">{entry.exit_reason}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] font-mono text-slate-500 uppercase">Exit Trigger:</span>
+                          <span className="text-slate-300 font-medium">{entry.exit_reason}</span>
                         </div>
                       )}
                       {entry.lesson_learned && (
-                        <div className="p-2 rounded bg-surface-subtle border border-border-subtle">
-                          <span className="text-[10px] font-semibold text-primary block">
-                            Key Lesson Learned:
+                        <div className="p-3 rounded-xl bg-[#00E676]/5 border border-[#00E676]/15">
+                          <span className="text-[10px] font-mono uppercase font-bold text-[#00E676] block mb-0.5">
+                            Key Lesson Learned
                           </span>
-                          <span className="text-text-primary italic">
+                          <span className="text-slate-200 italic">
                             "{entry.lesson_learned}"
                           </span>
                         </div>
@@ -272,22 +265,22 @@ export const TradeJournalPage: React.FC<TradeJournalPageProps> = ({ assets }) =>
           })}
         </div>
       ) : (
-        <div className="p-12 rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 text-center text-xs">
-          <span className="material-symbols-outlined text-[36px] text-text-tertiary mx-auto mb-2 block">
-            menu_book
-          </span>
-          <h3 className="font-headline-sm text-base text-text-primary font-semibold">
+        <div className="glass-card rounded-2xl p-16 text-center text-xs">
+          <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-4 text-slate-400">
+            <span className="material-symbols-outlined text-[32px]">menu_book</span>
+          </div>
+          <h3 className="text-lg font-bold text-white">
             Your trade journal is empty
           </h3>
-          <p className="text-text-secondary mt-1 max-w-sm mx-auto">
-            Top traders maintain a written journal to track setups, avoid revenge trading, and objectively review wins &amp; losses.
+          <p className="text-slate-400 mt-1 max-w-sm mx-auto text-xs">
+            Disciplined traders maintain a written journal to formulate setups, avoid revenge trading, and review executions.
           </p>
           <button
             type="button"
             onClick={handleOpenCreate}
-            className="mt-4 px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-xs font-semibold transition-colors inline-flex items-center gap-1.5 shadow-sm"
+            className="mt-5 px-5 py-2.5 rounded-xl bg-[#00E676] hover:bg-[#00c864] text-black font-bold text-xs transition-all inline-flex items-center gap-2 shadow-glow-green active:scale-95"
           >
-            <span className="material-symbols-outlined text-[16px]">add</span>
+            <span className="material-symbols-outlined text-[18px]">add</span>
             <span>Write First Trade Entry</span>
           </button>
         </div>
@@ -296,43 +289,43 @@ export const TradeJournalPage: React.FC<TradeJournalPageProps> = ({ assets }) =>
       {/* Create / Edit Journal Modal */}
       {showModal && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-xs animate-in fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in"
           onClick={(e) => {
             if (e.target === e.currentTarget) setShowModal(false);
           }}
         >
-          <div className="relative w-full max-w-lg bg-surface-container-lowest rounded-xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col text-on-surface">
-            <div className="bg-surface-base px-5 py-4 border-b border-surface-container-high flex items-center justify-between">
+          <div className="relative w-full max-w-lg bg-[#0C111E]/95 border border-white/10 rounded-2xl shadow-2xl backdrop-blur-2xl overflow-hidden flex flex-col text-white">
+            <div className="px-6 py-5 border-b border-white/10 flex items-center justify-between">
               <div>
-                <h3 className="font-headline-sm text-base text-text-primary font-semibold">
+                <h3 className="text-base font-bold text-white tracking-tight">
                   {editingEntry ? 'Edit Trade Journal Note' : 'New Trade Journal Entry'}
                 </h3>
-                <span className="text-xs text-text-secondary">
-                  Capture setup logic, targets, and emotional discipline
+                <span className="text-xs text-slate-400">
+                  Formulate setup rationale, price targets, and disciplined execution
                 </span>
               </div>
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-surface-container-high"
+                className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
               >
                 <span className="material-symbols-outlined text-[20px]">close</span>
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-5 flex flex-col gap-3 text-xs overflow-y-auto max-h-[80vh]">
+            <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4 text-xs overflow-y-auto max-h-[80vh]">
               {!editingEntry && (
                 <div>
-                  <label className="font-label-sm uppercase tracking-wider text-text-secondary font-semibold text-[10px] block mb-1">
+                  <label className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold block mb-1.5">
                     Select Instrument
                   </label>
                   <select
                     value={assetId}
                     onChange={(e) => setAssetId(parseInt(e.target.value))}
-                    className="w-full px-3 py-2 rounded-lg bg-surface-container-low text-text-primary border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#111726] text-white border border-white/10 focus:outline-none focus:border-[#00E676] focus:ring-1 focus:ring-[#00E676] text-sm"
                   >
                     {assets.map((a) => (
-                      <option key={a.id} value={a.id}>
+                      <option key={a.id} value={a.id} className="bg-[#111726] text-white">
                         {a.symbol} — {a.name}
                       </option>
                     ))}
@@ -341,7 +334,7 @@ export const TradeJournalPage: React.FC<TradeJournalPageProps> = ({ assets }) =>
               )}
 
               <div>
-                <label className="font-label-sm uppercase tracking-wider text-text-secondary font-semibold text-[10px] block mb-1">
+                <label className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold block mb-1.5">
                   Trade Thesis &amp; Rationale *
                 </label>
                 <textarea
@@ -349,15 +342,15 @@ export const TradeJournalPage: React.FC<TradeJournalPageProps> = ({ assets }) =>
                   required
                   value={thesis}
                   onChange={(e) => setThesis(e.target.value)}
-                  placeholder="Why are you taking this trade? (e.g. breakout above resistance, consolidation pullback)..."
-                  className="w-full px-3 py-2 rounded-lg bg-surface-container-low text-text-primary border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                  placeholder="Why are you taking this trade? (e.g. 50 EMA bounce, resistance breakout with above-average volume)..."
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#111726] text-white border border-white/10 focus:outline-none focus:border-[#00E676] focus:ring-1 focus:ring-[#00E676] resize-none text-xs leading-relaxed"
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-2.5">
                 <div>
-                  <label className="font-label-sm uppercase tracking-wider text-text-secondary font-semibold text-[10px] block mb-1">
-                    Planned Entry (₹)
+                  <label className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold block mb-1">
+                    Entry (₹)
                   </label>
                   <input
                     type="number"
@@ -367,12 +360,12 @@ export const TradeJournalPage: React.FC<TradeJournalPageProps> = ({ assets }) =>
                       setPlannedEntry(e.target.value ? parseFloat(e.target.value) : undefined)
                     }
                     placeholder="2940.00"
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-surface-container-low text-text-primary border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary font-mono"
+                    className="w-full px-3 py-2 rounded-xl bg-[#111726] text-white border border-white/10 focus:outline-none focus:border-[#00E676] focus:ring-1 focus:ring-[#00E676] font-mono text-xs"
                   />
                 </div>
                 <div>
-                  <label className="font-label-sm uppercase tracking-wider text-text-secondary font-semibold text-[10px] block mb-1">
-                    Planned Stop (₹)
+                  <label className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold block mb-1">
+                    Stop (₹)
                   </label>
                   <input
                     type="number"
@@ -382,12 +375,12 @@ export const TradeJournalPage: React.FC<TradeJournalPageProps> = ({ assets }) =>
                       setPlannedStop(e.target.value ? parseFloat(e.target.value) : undefined)
                     }
                     placeholder="2900.00"
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-surface-container-low text-text-primary border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary font-mono"
+                    className="w-full px-3 py-2 rounded-xl bg-[#111726] text-white border border-white/10 focus:outline-none focus:border-[#FF385C] focus:ring-1 focus:ring-[#FF385C] font-mono text-xs"
                   />
                 </div>
                 <div>
-                  <label className="font-label-sm uppercase tracking-wider text-text-secondary font-semibold text-[10px] block mb-1">
-                    Profit Target (₹)
+                  <label className="text-[10px] font-mono uppercase tracking-wider text-slate-400 font-semibold block mb-1">
+                    Target (₹)
                   </label>
                   <input
                     type="number"
@@ -397,50 +390,50 @@ export const TradeJournalPage: React.FC<TradeJournalPageProps> = ({ assets }) =>
                       setPlannedTarget(e.target.value ? parseFloat(e.target.value) : undefined)
                     }
                     placeholder="3020.00"
-                    className="w-full px-2.5 py-1.5 rounded-lg bg-surface-container-low text-text-primary border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary font-mono"
+                    className="w-full px-3 py-2 rounded-xl bg-[#111726] text-white border border-white/10 focus:outline-none focus:border-[#00E676] focus:ring-1 focus:ring-[#00E676] font-mono text-xs"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="font-label-sm uppercase tracking-wider text-text-secondary font-semibold text-[10px] block mb-1">
+                <label className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold block mb-1.5">
                   Exit Rationale (Optional)
                 </label>
                 <input
                   type="text"
                   value={exitReason}
                   onChange={(e) => setExitReason(e.target.value)}
-                  placeholder="Target hit, stopped out, trailing stop triggered..."
-                  className="w-full px-3 py-1.5 rounded-lg bg-surface-container-low text-text-primary border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary"
+                  placeholder="Target hit, trailing stop breached, thesis invalidated..."
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#111726] text-white border border-white/10 focus:outline-none focus:border-[#00E676] focus:ring-1 focus:ring-[#00E676] text-xs"
                 />
               </div>
 
               <div>
-                <label className="font-label-sm uppercase tracking-wider text-text-secondary font-semibold text-[10px] block mb-1">
-                  Lesson Learned / Reflection
+                <label className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold block mb-1.5">
+                  Post-Trade Reflection
                 </label>
                 <textarea
                   rows={2}
                   value={lessonLearned}
                   onChange={(e) => setLessonLearned(e.target.value)}
-                  placeholder="What did you do right? What could you improve next time?"
-                  className="w-full px-3 py-2 rounded-lg bg-surface-container-low text-text-primary border border-surface-container-high focus:outline-none focus:ring-1 focus:ring-primary resize-none"
+                  placeholder="What worked well? Did you follow your initial plan?"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#111726] text-white border border-white/10 focus:outline-none focus:border-[#00E676] focus:ring-1 focus:ring-[#00E676] resize-none text-xs leading-relaxed"
                 />
               </div>
 
-              <div className="pt-3 border-t border-surface-container-low flex items-center justify-end gap-2">
+              <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-lg text-text-secondary hover:text-text-primary hover:bg-surface-container font-semibold"
+                  className="px-4 py-2 rounded-xl text-slate-400 hover:text-white hover:bg-white/5 font-semibold transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-semibold shadow-sm"
+                  className="px-5 py-2.5 rounded-xl bg-[#00E676] hover:bg-[#00c864] text-black font-bold shadow-glow-green transition-all active:scale-95"
                 >
-                  {editingEntry ? 'Update Entry' : 'Save Journal Note'}
+                  {editingEntry ? 'Update Note' : 'Save Note'}
                 </button>
               </div>
             </form>

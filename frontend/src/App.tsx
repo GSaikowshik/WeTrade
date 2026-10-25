@@ -34,7 +34,6 @@ export const App: React.FC = () => {
           const p = await api.getPortfolio();
           setPortfolio(p);
         } catch {
-          // invalid token
           api.logout();
           setUser(null);
           setPortfolio(null);
@@ -64,7 +63,7 @@ export const App: React.FC = () => {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-surface font-body-md text-body-md text-on-surface antialiased flex flex-col">
+      <div className="min-h-screen bg-[#070A11] text-slate-100 font-sans antialiased flex flex-col selection:bg-emerald-500 selection:text-black">
         <Navbar
           user={user}
           portfolio={portfolio}
@@ -72,7 +71,7 @@ export const App: React.FC = () => {
           onOpenAuth={() => setShowAuthModal(true)}
         />
 
-        <div className="md:pl-60 pt-14 flex-1 flex flex-col justify-between">
+        <div className="md:pl-64 pt-16 flex-1 flex flex-col justify-between">
           <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <Routes>
               <Route
@@ -112,13 +111,13 @@ export const App: React.FC = () => {
             </Routes>
           </main>
 
-          <footer className="border-t border-surface-container-high/60 py-6 text-center text-xs text-text-tertiary bg-surface-container-lowest mt-12">
+          <footer className="border-t border-white/5 py-6 text-center text-xs text-slate-500 bg-[#070A11]/60 backdrop-blur mt-12">
             <div className="max-w-7xl mx-auto px-4 space-y-1">
-              <p className="font-medium text-text-secondary">
-                We Trade &copy; {new Date().getFullYear()} — Virtual Simulated Trading & Market Learning Platform for Indian Equities.
+              <p className="font-semibold text-slate-400">
+                We Trade &copy; {new Date().getFullYear()} — Modern Virtual Trading Platform for Indian Equities.
               </p>
-              <p className="text-[11px] text-text-tertiary">
-                Virtual simulated funds only. Not registered with SEBI or any regulatory agency. No real financial investments or monetary liabilities.
+              <p className="text-[11px] text-slate-600">
+                Simulated virtual capital only. Not registered with SEBI or any regulatory agency. No monetary deposit or investment risk.
               </p>
             </div>
           </footer>

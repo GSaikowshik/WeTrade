@@ -37,7 +37,7 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
   const [success, setSuccess] = useState<Order | null>(null);
   const idempotencyPrefix = useId();
 
-  // Resolve available cash & quantity
+  // Resolve available cash & position quantity
   const availableCash =
     propCash !== undefined
       ? propCash
@@ -60,7 +60,10 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
   const estimatedFees = brokerage + statutory;
 
   const totalRequired = estimatedNotional + estimatedFees;
-  const postTradeCash = side === 'BUY' ? availableCash - totalRequired : availableCash + Math.max(0, estimatedNotional - estimatedFees);
+  const postTradeCash =
+    side === 'BUY'
+      ? availableCash - totalRequired
+      : availableCash + Math.max(0, estimatedNotional - estimatedFees);
 
   const canAffordBuy = availableCash >= totalRequired;
   const canSellQty = availablePositionQty >= quantity;
@@ -111,74 +114,73 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
   return (
     <div
       id="tradingModalOverlay"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-on-surface/40 backdrop-blur-xs transition-opacity duration-200 animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-opacity duration-200 animate-in fade-in"
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="relative w-full max-w-[500px] bg-surface-container-lowest rounded-xl shadow-2xl border border-surface-container-high overflow-hidden flex flex-col text-on-surface">
-        {/* Modal Top Header */}
-        <div className="bg-surface-base px-5 py-4 border-b border-surface-container-high flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="font-headline-sm text-headline-sm text-text-primary font-semibold tracking-tight">
-                {asset.symbol}
-              </span>
-              <span className="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-label-sm text-[10px] uppercase font-semibold">
-                NSE:EQ
-              </span>
-              <span className="px-2 py-0.5 rounded bg-badge-demo-bg text-badge-demo-text font-label-sm text-[10px] font-semibold uppercase">
-                Paper Trading
-              </span>
+      <div className="relative w-full max-w-[480px] bg-[#0C111E]/95 backdrop-blur-2xl rounded-3xl shadow-2xl shadow-black/80 border border-white/10 overflow-hidden flex flex-col text-slate-100">
+        {/* Top Header */}
+        <div className="px-6 py-5 border-b border-white/5 bg-white/[0.02] flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-emerald-500/20 to-cyan-500/20 border border-emerald-500/30 flex items-center justify-center font-black text-sm text-emerald-400">
+              {asset.symbol.slice(0, 2)}
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-surface-container-high transition-colors"
-              title="Close Dialog"
-            >
-              <span className="material-symbols-outlined text-[20px]">close</span>
-            </button>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-base text-white">{asset.symbol}</span>
+                <span className="px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-[9px] font-mono font-bold text-slate-400">
+                  NSE:EQ
+                </span>
+              </div>
+              <div className="text-xs text-slate-400">{asset.name}</div>
+            </div>
           </div>
 
-          <div className="flex items-center justify-between pt-0.5">
-            <div className="flex items-baseline gap-2">
-              <span className="font-numeric-md text-numeric-md text-text-primary font-bold tabular-nums">
-                ₹{fmtMoney(price)}
-              </span>
-              <span
-                className={`font-label-sm text-xs font-semibold tabular-nums ${
-                  isPositive ? 'text-market-up' : 'text-market-down'
-                }`}
-              >
-                {isPositive ? '+' : ''}₹{fmtMoney(change)} ({fmtPct(changePct)}%)
-              </span>
-            </div>
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-market-up-subtle text-market-up font-label-sm text-[10px] font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-market-up animate-pulse"></span>
-              <span>DEMO VIRTUAL FUNDS • ZERO RISK</span>
-            </div>
-          </div>
-          <div className="text-xs text-text-secondary">{asset.name}</div>
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-8 h-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+          >
+            <span className="material-symbols-outlined text-[20px]">close</span>
+          </button>
         </div>
 
-        {/* Modal Body / Form */}
-        <form onSubmit={handleSubmit} className="p-5 flex flex-col gap-4 overflow-y-auto max-h-[calc(90vh-140px)]">
-          {/* Order Side Segmented Tabs (Buy vs Sell) */}
-          <div className="grid grid-cols-2 p-1 bg-surface-container-low rounded-lg gap-1">
+        {/* Live Price Strip */}
+        <div className="px-6 py-3 bg-[#080C16] border-b border-white/5 flex items-center justify-between">
+          <div className="flex items-baseline gap-2 font-mono">
+            <span className="text-lg font-black text-white">₹{fmtMoney(price)}</span>
+            <span
+              className={`text-xs font-bold ${
+                isPositive ? 'text-emerald-400' : 'text-rose-400'
+              }`}
+            >
+              {isPositive ? '+' : ''}₹{fmtMoney(change)} ({fmtPct(changePct)}%)
+            </span>
+          </div>
+
+          <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-mono font-bold">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Simulated Virtual Funds</span>
+          </div>
+        </div>
+
+        {/* Form Body */}
+        <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-4 overflow-y-auto max-h-[calc(90vh-140px)]">
+          {/* Segmented Buy / Sell Selector */}
+          <div className="grid grid-cols-2 p-1 bg-black/40 rounded-2xl border border-white/5 gap-1">
             <button
               type="button"
               onClick={() => {
                 setSide('BUY');
                 setError(null);
               }}
-              className={`py-2 rounded-md font-headline-sm text-sm text-center font-semibold transition-all flex items-center justify-center gap-1.5 ${
+              className={`py-2.5 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-2 ${
                 side === 'BUY'
-                  ? 'bg-primary-container text-on-primary shadow-xs'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-surface-container'
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.35)]'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
-              <span className="material-symbols-outlined text-[18px]">south_west</span>
               <span>Buy</span>
             </button>
             <button
@@ -187,33 +189,27 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
                 setSide('SELL');
                 setError(null);
               }}
-              className={`py-2 rounded-md font-headline-sm text-sm text-center font-semibold transition-all flex items-center justify-center gap-1.5 ${
+              className={`py-2.5 rounded-xl font-black text-xs transition-all flex items-center justify-center gap-2 ${
                 side === 'SELL'
-                  ? 'bg-market-down text-on-primary shadow-xs'
-                  : 'text-text-secondary hover:text-market-down hover:bg-surface-container'
+                  ? 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-[0_0_15px_rgba(244,63,94,0.35)]'
+                  : 'text-slate-400 hover:text-white'
               }`}
             >
-              <span className="material-symbols-outlined text-[18px]">north_east</span>
               <span>Sell</span>
             </button>
           </div>
 
-          {/* Product Type & Order Type Tabs */}
-          <div className="flex items-center justify-between gap-2">
-            <div className="flex items-center bg-surface-container-low p-0.5 rounded-lg border border-surface-container-high/60">
-              <span className="px-2.5 py-1 rounded bg-surface-container-lowest text-text-primary font-label-sm text-xs font-semibold shadow-2xs">
-                CNC (Delivery)
-              </span>
-            </div>
-
-            <div className="flex items-center bg-surface-container-low p-0.5 rounded-lg border border-surface-container-high/60">
+          {/* Order Type: Market vs Limit */}
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-slate-400">Order Type</span>
+            <div className="flex items-center bg-black/40 p-1 rounded-xl border border-white/5 text-xs">
               <button
                 type="button"
                 onClick={() => setOrderType('MARKET')}
-                className={`px-3 py-1 rounded font-label-sm text-xs font-semibold transition-colors ${
+                className={`px-3 py-1 rounded-lg font-bold transition-all ${
                   orderType === 'MARKET'
-                    ? 'bg-surface-container-lowest text-text-primary shadow-2xs'
-                    : 'text-text-secondary hover:text-text-primary'
+                    ? 'bg-white/10 text-white shadow-xs'
+                    : 'text-slate-400 hover:text-white'
                 }`}
               >
                 Market
@@ -221,10 +217,10 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
               <button
                 type="button"
                 onClick={() => setOrderType('LIMIT')}
-                className={`px-3 py-1 rounded font-label-sm text-xs font-semibold transition-colors ${
+                className={`px-3 py-1 rounded-lg font-bold transition-all ${
                   orderType === 'LIMIT'
-                    ? 'bg-surface-container-lowest text-text-primary shadow-2xs'
-                    : 'text-text-secondary hover:text-text-primary'
+                    ? 'bg-white/10 text-white shadow-xs'
+                    : 'text-slate-400 hover:text-white'
                 }`}
               >
                 Limit
@@ -232,18 +228,16 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
             </div>
           </div>
 
-          {/* Quantity Selector */}
-          <div className="flex flex-col gap-1.5">
+          {/* Quantity Controls */}
+          <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between text-xs">
-              <label className="font-label-sm uppercase tracking-wider text-text-secondary font-semibold text-[11px]">
-                Quantity (Shares)
-              </label>
-              <span className="text-text-tertiary">
-                Holding: {availablePositionQty} shares •{' '}
+              <span className="font-bold text-slate-300">Quantity (Shares)</span>
+              <span className="text-slate-400 font-mono text-[11px]">
+                Holding: {availablePositionQty} •{' '}
                 <button
                   type="button"
                   onClick={handleMaxQty}
-                  className="text-primary font-semibold hover:underline"
+                  className="text-emerald-400 font-bold hover:underline"
                 >
                   Max
                 </button>
@@ -254,7 +248,7 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
               <button
                 type="button"
                 onClick={() => handleQtyChange(-1)}
-                className="w-10 h-10 rounded-lg bg-surface-container-low hover:bg-surface-container text-text-primary flex items-center justify-center font-bold text-lg border border-surface-container-high/60"
+                className="w-11 h-11 rounded-2xl bg-white/5 hover:bg-white/10 text-white flex items-center justify-center font-bold text-xl border border-white/10 transition-colors"
               >
                 −
               </button>
@@ -263,25 +257,25 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
                 min="1"
                 value={quantity}
                 onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
-                className="flex-1 h-10 rounded-lg bg-surface-container-low text-center font-numeric-md font-semibold text-text-primary border border-surface-container-high/60 focus:outline-none focus:ring-1 focus:ring-primary"
+                className="flex-1 h-11 rounded-2xl bg-black/40 text-center font-mono text-lg font-bold text-white border border-white/10 focus:outline-none focus:border-emerald-500/50"
               />
               <button
                 type="button"
                 onClick={() => handleQtyChange(1)}
-                className="w-10 h-10 rounded-lg bg-surface-container-low hover:bg-surface-container text-text-primary flex items-center justify-center font-bold text-lg border border-surface-container-high/60"
+                className="w-11 h-11 rounded-2xl bg-white/5 hover:bg-white/10 text-white flex items-center justify-center font-bold text-xl border border-white/10 transition-colors"
               >
                 +
               </button>
             </div>
 
-            {/* Quick Increment Steppers */}
-            <div className="flex items-center gap-1.5 mt-1">
+            {/* Quick Stepper Chips */}
+            <div className="flex items-center gap-1.5">
               {[1, 5, 10, 25, 50].map((step) => (
                 <button
                   key={step}
                   type="button"
                   onClick={() => setQuantity(step)}
-                  className="px-2.5 py-1 rounded bg-surface-container-low hover:bg-surface-container text-[11px] font-medium text-text-secondary"
+                  className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-[11px] font-mono font-semibold text-slate-300 border border-white/5"
                 >
                   +{step}
                 </button>
@@ -289,123 +283,108 @@ export const OrderTicket: React.FC<OrderTicketProps> = ({
             </div>
           </div>
 
-          {/* Limit Price Input if orderType is LIMIT */}
+          {/* Limit Price Input */}
           {orderType === 'LIMIT' && (
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between text-xs">
-                <label className="font-label-sm uppercase tracking-wider text-text-secondary font-semibold text-[11px]">
-                  Limit Price (₹)
-                </label>
-                <span className="text-text-tertiary">Tick size: ₹0.05</span>
+                <span className="font-bold text-slate-300">Target Limit Price (₹)</span>
+                <span className="text-[10px] text-slate-500 font-mono">NSE Tick: ₹0.05</span>
               </div>
               <input
                 type="number"
                 step="0.05"
-                min="0.05"
                 value={limitPrice}
                 onChange={(e) => setLimitPrice(parseFloat(e.target.value) || 0)}
-                className="w-full h-10 px-3 rounded-lg bg-surface-container-low text-left font-numeric-md font-semibold text-text-primary border border-surface-container-high/60 focus:outline-none focus:ring-1 focus:ring-primary"
+                className="w-full h-11 px-4 rounded-2xl bg-black/40 text-left font-mono text-sm font-bold text-white border border-white/10 focus:outline-none focus:border-emerald-500/50"
               />
             </div>
           )}
 
-          {/* Financial Breakdown Card */}
-          <div className="p-3.5 rounded-lg bg-surface-subtle border border-surface-container-high flex flex-col gap-2 font-body-sm text-body-sm text-xs">
-            <div className="flex items-center justify-between text-text-secondary">
-              <span>Trade Gross Value</span>
-              <span className="text-text-primary font-mono font-medium">
-                ₹{fmtMoney(estimatedNotional)}
-              </span>
+          {/* Cost & Fee Transparency Box */}
+          <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col gap-2 text-xs font-mono">
+            <div className="flex items-center justify-between text-slate-400">
+              <span>Gross Trade Value</span>
+              <span className="text-white font-bold">₹{fmtMoney(estimatedNotional)}</span>
             </div>
-            <div className="flex items-center justify-between text-text-secondary">
-              <span>Simulated Brokerage</span>
-              <span className="text-market-up font-mono font-medium">
-                ₹{fmtMoney(brokerage)} (Demo Cap ₹20)
-              </span>
+            <div className="flex items-center justify-between text-slate-400">
+              <span>Brokerage (Demo Cap)</span>
+              <span className="text-emerald-400 font-bold">₹{fmtMoney(brokerage)}</span>
             </div>
-            <div className="flex items-center justify-between text-text-secondary">
+            <div className="flex items-center justify-between text-slate-400">
               <span>Estimated Fees (STT/GST)</span>
-              <span className="text-text-primary font-mono font-medium">
-                ₹{fmtMoney(estimatedFees)}
-              </span>
+              <span className="text-slate-300">₹{fmtMoney(estimatedFees)}</span>
             </div>
-            <div className="h-px bg-surface-container-highest my-0.5"></div>
-            <div className="flex items-center justify-between font-semibold">
-              <span className="text-text-primary">
-                {side === 'BUY' ? 'Total Required Margin' : 'Estimated Net Proceeds'}
+            <div className="h-px bg-white/5 my-1"></div>
+            <div className="flex items-center justify-between text-sm font-bold">
+              <span className="text-white">
+                {side === 'BUY' ? 'Required Margin' : 'Net Proceeds'}
               </span>
-              <span className="text-primary font-numeric-md text-sm font-bold">
+              <span className="text-emerald-400">
                 ₹{fmtMoney(side === 'BUY' ? totalRequired : Math.max(0, estimatedNotional - estimatedFees))}
               </span>
             </div>
           </div>
 
-          {/* Account Cash Strip & Margin Meter */}
-          <div className="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-1.5 text-xs">
-            <div className="flex items-center justify-between text-text-secondary">
-              <span>Available Virtual Cash</span>
-              <span className="font-mono text-text-primary font-semibold">
-                ₹{fmtMoney(availableCash)}
-              </span>
+          {/* Cash Status Meter */}
+          <div className="p-3.5 rounded-2xl bg-[#080C16] border border-white/5 flex flex-col gap-2 text-xs font-mono">
+            <div className="flex items-center justify-between text-slate-400">
+              <span>Available Cash</span>
+              <span className="text-white font-bold">₹{fmtMoney(availableCash)}</span>
             </div>
-            <div className="flex items-center justify-between text-text-secondary">
-              <span>Balance After Order</span>
-              <span className="font-mono text-market-up font-semibold">
-                ₹{fmtMoney(postTradeCash)}
-              </span>
+            <div className="flex items-center justify-between text-slate-400">
+              <span>Post-Trade Balance</span>
+              <span className="text-emerald-400 font-bold">₹{fmtMoney(postTradeCash)}</span>
             </div>
-            {/* Visual Margin Meter */}
-            <div className="w-full h-1.5 rounded-full bg-surface-container-highest overflow-hidden">
+            <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
               <div
-                className={`h-full rounded-full transition-all duration-300 ${
-                  side === 'BUY' && !canAffordBuy ? 'bg-error' : 'bg-primary'
+                className={`h-1.5 rounded-full ${
+                  side === 'BUY' && !canAffordBuy ? 'bg-rose-500' : 'bg-emerald-400'
                 }`}
-                style={{ width: `${Math.min(100, marginPct)}%` }}
+                style={{ width: `${marginPct}%` }}
               ></div>
             </div>
           </div>
 
-          {/* Validation Warnings */}
+          {/* Validation Errors */}
           {side === 'BUY' && !canAffordBuy && (
-            <div className="p-2.5 rounded-lg bg-market-down-subtle border border-market-down/20 text-market-down text-xs flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">warning</span>
-              <span>Insufficient virtual cash for this order. Required: ₹{fmtMoney(totalRequired)}</span>
+            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center gap-2">
+              <span className="material-symbols-outlined text-[16px]">error</span>
+              <span>Insufficient virtual cash. Required: ₹{fmtMoney(totalRequired)}</span>
             </div>
           )}
 
           {side === 'SELL' && !canSellQty && (
-            <div className="p-2.5 rounded-lg bg-market-down-subtle border border-market-down/20 text-market-down text-xs flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">warning</span>
-              <span>You do not hold enough shares of {asset.symbol} to sell. Current holding: {availablePositionQty}.</span>
+            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs flex items-center gap-2">
+              <span className="material-symbols-outlined text-[16px]">error</span>
+              <span>You do not hold enough shares of {asset.symbol} to sell.</span>
             </div>
           )}
 
           {error && (
-            <div className="p-2.5 rounded-lg bg-market-down-subtle border border-market-down/20 text-market-down text-xs">
+            <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs">
               {error}
             </div>
           )}
 
           {success && (
-            <div className="p-2.5 rounded-lg bg-market-up-subtle border border-market-up/20 text-market-up text-xs flex items-center gap-2">
-              <span className="material-symbols-outlined text-[18px]">check_circle</span>
+            <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs flex items-center gap-2">
+              <span className="material-symbols-outlined text-[16px]">check_circle</span>
               <span>Order executed! Status: {success.status}</span>
             </div>
           )}
 
-          {/* Disclaimer text */}
-          <p className="font-label-sm text-[11px] text-text-tertiary leading-relaxed text-center">
-            Simulated order conformant with NSE tick rules. No real money or margin liability.
+          <p className="text-[11px] text-slate-500 text-center leading-relaxed">
+            Simulated order conformant with NSE tick rules. Zero financial liability.
           </p>
 
           {/* Submit Action Button */}
           <button
             type="submit"
             disabled={loading || (side === 'BUY' && !canAffordBuy) || (side === 'SELL' && !canSellQty)}
-            className={`w-full py-3 rounded-lg font-headline-sm text-sm font-semibold tracking-tight transition-all shadow-sm active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
+            className={`w-full py-3.5 rounded-2xl font-black text-sm tracking-tight transition-all shadow-lg active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed ${
               side === 'BUY'
-                ? 'bg-primary hover:bg-primary-container text-on-primary'
-                : 'bg-market-down hover:opacity-90 text-on-primary'
+                ? 'bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 text-slate-950 shadow-[0_0_20px_rgba(16,185,129,0.35)]'
+                : 'bg-gradient-to-r from-rose-500 to-pink-500 text-white shadow-[0_0_20px_rgba(244,63,94,0.35)]'
             }`}
           >
             <span className="material-symbols-outlined text-[20px]">bolt</span>
