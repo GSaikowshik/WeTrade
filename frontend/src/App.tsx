@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { Navbar } from './components/Navbar';
 import { AuthModal } from './components/AuthModal';
 import { Dashboard } from './pages/Dashboard';
@@ -131,6 +132,9 @@ export const App: React.FC = () => {
             }}
           />
         )}
+
+        {/* Vercel Web Analytics */}
+        <Analytics />
       </div>
     </BrowserRouter>
   );
