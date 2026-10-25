@@ -10,9 +10,6 @@ def test_health_endpoint(client):
 def test_root_endpoint(client):
     response = client.get("/")
     assert response.status_code == 200
-    content_type = response.headers.get("content-type", "")
-    if "text/html" in content_type:
-        assert "we trade" in response.text.lower()
-    else:
-        data = response.json()
-        assert "We Trade API" in data["message"]
+    data = response.json()
+    assert "We Trade API" in data["message"]
+

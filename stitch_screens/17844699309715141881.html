@@ -1,0 +1,503 @@
+We Trade — Premium Virtual Trading Platform UI/UX Design
+Your Role
+Act as a world-class fintech product designer, senior UI/UX architect, design systems expert, and frontend experience designer. Design a production-quality web application for We Trade, a virtual stock trading and market-learning platform for beginners and aspiring traders.
+Do not produce a generic admin dashboard, a basic CRUD interface, or a simplistic stock market template. Create a cohesive, premium, visually polished financial product that feels trustworthy, modern, fast, intuitive, and ready for a real startup.
+1. Product Vision
+We Trade allows users to practice trading using virtual money without risking real money. Users can explore Indian equities, track their portfolios, place simulated market and limit orders, study price charts, review trading decisions, and learn market fundamentals.
+The starting virtual balance is ₹1,00,000.
+The initial supported universe consists of six Indian equities:
+
+
+RELIANCE — Reliance Industries Ltd.
+
+TCS — Tata Consultancy Services Ltd.
+
+INFY — Infosys Ltd.
+
+HDFCBANK — HDFC Bank Ltd.
+
+ICICIBANK — ICICI Bank Ltd.
+
+ITC — ITC Ltd.
+All trading is simulated. Clearly distinguish demo market data from real or delayed market data. Never imply that users are investing actual money.
+2. Visual Direction
+Create a premium fintech aesthetic with the following qualities:
+
+
+Minimal, confident, editorial, and data-rich.
+
+Dark charcoal or near-black typography with a clean, warm-white or very light neutral background.
+
+Deep emerald green as the primary brand accent.
+
+Restrained red for negative price movements and losses.
+
+Subtle neutral borders, soft shadows, carefully controlled radii, and generous spacing.
+
+High-quality financial charts with legible axes, subtle gridlines, candlesticks, and volume bars.
+
+Crisp typography with strong numerical hierarchy.
+
+Consistent Lucide-style outline icons.
+
+Beautiful empty states, loading skeletons, hover states, tooltips, and form validation.
+
+Subtle, purposeful animation rather than excessive gradients, glassmorphism, or decorative effects.
+Use a professional font such as Inter or Geist. Use tabular numerals for prices, balances, percentages, and quantities.
+Avoid generic purple gradients, oversized hero sections inside the application, excessive rounded cards, cartoon illustrations, emoji icons, and oversized green profit numbers.
+The interface should feel designed by an experienced team at a serious fintech company.
+3. Brand Identity
+Product name: We Trade
+Brand message: Practice the market. Master your decisions.
+Short supporting message: Learn to trade with virtual money, real market concepts, and zero financial risk.
+Create a compact, recognizable wordmark using a simple geometric market-inspired symbol and clean typography. Keep branding subtle within the application.
+Use the phrase “Virtual Portfolio” in prominent but unobtrusive locations.
+Use Indian formatting throughout the initial experience:
+
+
+Currency: INR (₹)
+
+Number grouping: Indian numbering convention where appropriate
+
+Exchange: NSE
+
+Timezone: Asia/Kolkata
+
+Stock symbols and company names must be clearly distinguishable.
+4. Application Shell and Navigation
+Design a desktop-first responsive web application.
+Desktop layout:
+
+
+A fixed or sticky left sidebar approximately 240 pixels wide.
+
+A slim top bar with page title or breadcrumbs, global stock search, notifications, and user profile.
+
+A spacious content area with a consistent grid and carefully controlled maximum width.
+
+A compact market-status and data-status indicator.
+Sidebar navigation:
+
+
+Overview
+
+Markets
+
+Watchlist
+
+Portfolio
+
+Orders
+
+Trade Journal
+
+Learn
+
+Settings
+Place the We Trade logo at the top and the virtual-account balance or simulation status near the bottom.
+On mobile, use a compact header and a mobile-friendly bottom navigation or collapsible menu. Adapt tables into readable cards where necessary.
+5. Screen One: Overview Dashboard
+This is the primary screen and must receive the most design attention.
+Create a refined, balanced dashboard with:
+Header
+
+
+Greeting and concise page title: “Your trading workspace”.
+
+Small badge: “VIRTUAL ACCOUNT”.
+
+Market data badge: “DEMO DATA”.
+
+Clear primary action: “Explore markets”.
+
+Secondary action: “View portfolio”.
+Portfolio Summary
+Display:
+
+
+Total portfolio value.
+
+Available virtual cash.
+
+Holdings market value.
+
+Unrealized profit/loss.
+
+Realized profit/loss.
+Use ₹1,00,000 as the initial virtual cash for a new account. Do not invent a profitable trading history for a new user.
+Create a beautiful portfolio performance chart with:
+
+
+Time filters: 1D, 1W, 1M, 3M, 1Y, ALL.
+
+A clean line or area chart.
+
+Useful crosshair and tooltip states.
+
+An honest empty state when historical portfolio performance is unavailable.
+Never fabricate historical portfolio performance or display a misleading positive percentage.
+Market Overview
+Display a compact market watchlist for the six supported stocks with:
+
+
+Symbol and company name.
+
+Latest demo price.
+
+Absolute and percentage movement.
+
+Small sparkline.
+
+Clear demo-data attribution.
+Portfolio Allocation
+Include a clean allocation visualization showing cash versus invested holdings. When the portfolio has no positions, show an elegant onboarding state rather than a meaningless chart.
+Recent Activity
+Show recent orders and executions with:
+
+
+Symbol.
+
+Buy or sell.
+
+Quantity.
+
+Execution price.
+
+Order status.
+
+Timestamp.
+For new users, show a tasteful empty state with a “Find your first stock” action.
+Learning Prompt
+Include a compact learning card such as “Your first simulated trade” linking to a short, beginner-friendly guided experience.
+Do not cram every feature into one screen. Preserve hierarchy and whitespace.
+6. Screen Two: Markets Explorer
+Design a powerful but approachable stock discovery experience.
+Include:
+
+
+Search by symbol or company name.
+
+Tabs for All, Watchlist, and available categories.
+
+A clean market table with symbol, company, price, daily movement, and watchlist action.
+
+Sorting by price or percentage change.
+
+Useful hover and selected-row states.
+
+Clear market data status and last-updated timestamp.
+Use the six supported Indian stocks as realistic interface examples.
+Clicking a stock opens its detailed market page.
+Do not display fake live exchange status, unsupported securities, or invented market statistics as real data.
+7. Screen Three: Stock Detail and Trading Terminal
+This is a core differentiating screen.
+Create a sophisticated, professional market-detail layout.
+Header:
+
+
+Symbol and full company name.
+
+Exchange: NSE.
+
+Price and price movement.
+
+Demo-data indicator and quote timestamp.
+
+Watchlist toggle.
+Main content:
+
+
+Large interactive candlestick chart.
+
+Timeframe controls: 15m, 1H, 1D.
+
+OHLC information on hover.
+
+Volume chart below price candles.
+
+Crosshair, price scale, time scale, and clear grid.
+
+Clean chart toolbar.
+
+A professional, compact information panel.
+Trading panel:
+
+
+Prominent Buy and Sell controls.
+
+Market and Limit order types.
+
+Quantity input.
+
+Limit price field when applicable.
+
+Estimated trade value.
+
+Estimated brokerage simulation.
+
+Estimated regulatory charge simulation.
+
+Estimated total cost or proceeds.
+
+Available virtual cash or available position quantity.
+
+Clear order validation.
+
+Primary action such as “Place virtual buy order”.
+Before order submission, clearly state that the order is simulated and no real money is used.
+Do not make the interface look like a real broker order confirmation. The simulation disclaimer must remain visible.
+8. Screen Four: Portfolio and Holdings
+Design an analytical portfolio screen.
+Summary metrics:
+
+
+Total portfolio value.
+
+Virtual cash.
+
+Invested value.
+
+Realized P&L.
+
+Unrealized P&L.
+Holdings table:
+
+
+Stock symbol and name.
+
+Quantity.
+
+Average cost.
+
+Current demo price.
+
+Market value.
+
+Unrealized P&L.
+
+Return percentage.
+
+Portfolio allocation.
+Include:
+
+
+Allocation chart.
+
+Sortable columns.
+
+Clear profit/loss visual treatment.
+
+Useful actions to inspect a holding or open a sell ticket.
+Handle empty portfolios beautifully and make the next step obvious.
+9. Screen Five: Orders and Transaction History
+Create a professional order-management interface with tabs:
+
+
+Open Orders
+
+Executed
+
+Cancelled
+
+Rejected
+
+All Orders
+Include order type, side, symbol, quantity, limit price, execution price, fees, order status, and timestamp where applicable.
+Pending limit orders must have a clear cancellation action.
+Create a separate transaction-ledger view that distinguishes cash movements, deposits, trade debits, sale proceeds, and simulated fees.
+Use clear status badges and readable timestamps. Make the audit trail understandable for beginners without sacrificing precision.
+10. Screen Six: Trade Journal
+Make this one of We Trade's signature features.
+Create an elegant trade journal where users reflect on their decisions rather than merely record transactions.
+Journal entries should support:
+
+
+Stock symbol.
+
+Trade date.
+
+Buy or sell.
+
+Entry thesis.
+
+Planned entry.
+
+Stop-loss and target notes.
+
+Emotional state or confidence rating.
+
+Exit rationale.
+
+What went well.
+
+What could improve.
+
+Lessons learned.
+Use a clean journal timeline or list with search and filtering.
+Create a polished editor with a clear save state. Do not overwhelm users with too many fields at once.
+Include a summary section with total journal entries and completed reviews, based only on available data.
+11. Screen Seven: Learn
+Create a beginner-friendly educational hub.
+Topics:
+
+
+How stock markets work.
+
+Candlesticks and volume.
+
+Market versus limit orders.
+
+Bid and ask.
+
+Average cost basis.
+
+Realized versus unrealized P&L.
+
+Risk management.
+
+Common trading mistakes.
+
+Why paper trading differs from real trading.
+Use attractive editorial cards, clear reading progress, and concise illustrations or diagrams where useful.
+Never promise profits or present educational content as personalized investment advice.
+12. Screen Eight: Authentication and Onboarding
+Design polished:
+
+
+Sign-up screen.
+
+Login screen.
+
+First-time onboarding.
+
+Virtual account introduction.
+Explain that every new account begins with ₹1,00,000 in virtual funds.
+Use a concise three-step onboarding flow:
+
+
+Explore supported stocks.
+
+Place a simulated trade.
+
+Review the result and journal your decision.
+Make it reassuring, professional, and frictionless.
+Do not use real-money payment screens or ask users for banking information.
+13. Design System Requirements
+Establish consistent design tokens for:
+
+
+Primary, secondary, and semantic colors.
+
+Typography scale.
+
+Spacing scale.
+
+Border radii.
+
+Shadows and borders.
+
+Buttons.
+
+Inputs.
+
+Tabs.
+
+Tables.
+
+Cards.
+
+Tooltips.
+
+Modals and drawers.
+
+Toast notifications.
+
+Status badges.
+
+Empty states.
+
+Loading skeletons.
+
+Charts.
+Use a consistent grid, spacing rhythm, and alignment across all screens.
+Ensure accessible contrast, keyboard navigation, visible focus states, readable financial figures, and adequately sized interactive targets.
+Provide both light and dark theme directions if supported, with the light theme as the primary design.
+14. Interaction and UX Rules
+Design meaningful interaction states, not just static screenshots.
+Include:
+
+
+Stock search and selection.
+
+Watchlist toggling.
+
+Timeframe switching.
+
+Buy/sell switching.
+
+Market/limit order switching.
+
+Inline validation.
+
+Insufficient virtual cash state.
+
+Stale quote warning.
+
+Pending limit-order state.
+
+Successful simulated-order confirmation.
+
+Order rejection state.
+
+Empty portfolio state.
+
+Empty journal state.
+
+Responsive sidebar and mobile navigation.
+Confirmations should explain the transaction in plain language. Do not use misleading success animations that imply real-money profits.
+15. Implementation-Friendly Design
+The final design must be feasible to implement using:
+
+
+React.
+
+TypeScript.
+
+Vite.
+
+Tailwind CSS.
+
+Lucide icons.
+
+Reusable components.
+
+React Router.
+
+An existing FastAPI backend and PostgreSQL database.
+Favor reusable layout components, shared spacing tokens, consistent table patterns, and reusable chart containers.
+Do not invent API behavior or add unsupported financial features such as derivatives, leverage, options, margin trading, deposits through payment gateways, or real-money execution.
+The design should map cleanly to a modular frontend architecture.
+16. Final Deliverables
+Generate a cohesive, high-fidelity design for the entire We Trade application.
+Prioritize these screens in order:
+
+
+Overview Dashboard.
+
+Stock Detail and Trading Terminal.
+
+Markets Explorer.
+
+Portfolio.
+
+Orders and Transaction History.
+
+Trade Journal.
+
+Learn.
+
+Authentication and Onboarding.
+Maintain the same design language across every screen.
+Make the dashboard and trading terminal exceptionally polished. Use realistic sample UI content, but label all prices and market movements as demo data. For a new account, preserve the ₹1,00,000 starting cash and avoid inventing completed trades or returns.
+Final quality bar: a premium fintech startup product that feels intentional, distinctive, trustworthy, responsive, and genuinely useful to someone learning to trade.
+Design the experience first. Prioritize usability, information hierarchy, and visual quality over adding unnecessary features.

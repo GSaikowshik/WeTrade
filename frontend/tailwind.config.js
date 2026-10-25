@@ -68,13 +68,24 @@ export default {
         "badge-demo-bg": "#F3F4F6",
         "background": "#f7faf6",
         "on-error": "#ffffff",
-        "surface-container-high": "#e6e9e5"
+        "surface-container-high": "#e6e9e5",
+        fintech: {
+          dark: '#0B0F17',
+          card: '#121824',
+          border: '#1F293D',
+          muted: '#8A99AD',
+          emerald: '#0F766E',
+          rose: '#B91C1C',
+          blue: '#3B82F6',
+          amber: '#F59E0B',
+        }
       },
       borderRadius: {
         "DEFAULT": "0.125rem",
         "lg": "0.25rem",
         "xl": "0.5rem",
-        "full": "0.75rem"
+        "2xl": "0.75rem",
+        "full": "9999px"
       },
       spacing: {
         "space-lg": "1.25rem",

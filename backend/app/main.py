@@ -1,9 +1,9 @@
 import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from starlette.responses import FileResponse
+from starlette.responses import FileResponse, JSONResponse
 from app.config import settings
 from app.database import engine, Base, SessionLocal
 from app.services.seed_data import seed_demo_market_data
@@ -63,9 +63,16 @@ if os.path.exists(frontend_dist):
     app.mount("/assets", StaticFiles(directory=os.path.join(frontend_dist, "assets")), name="assets")
 
     @app.get("/{full_path:path}")
-    def serve_frontend(full_path: str = ""):
+    def serve_frontend(request: Request, full_path: str = ""):
         if full_path.startswith("api/") or full_path in ("docs", "openapi.json", "redoc"):
             return None
+        if full_path == "" and "text/html" not in request.headers.get("accept", ""):
+            return JSONResponse({
+                "message": "Welcome to We Trade API",
+                "docs_url": "/docs",
+                "version": settings.VERSION,
+                "disclaimer": "All funds and transactions are virtual."
+            })
         file_path = os.path.join(frontend_dist, full_path)
         if full_path and os.path.isfile(file_path):
             return FileResponse(file_path)

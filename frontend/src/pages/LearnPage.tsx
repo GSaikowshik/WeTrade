@@ -13,7 +13,7 @@ export const LearnPage: React.FC = () => {
     },
     {
       title: 'Realized vs. Unrealized Profit & Loss (P&L)',
-      icon: 'check_circle',
+      icon: 'monitoring',
       content: [
         'Unrealized P&L (Paper Profit): The difference between what you paid (cost basis) and what your open positions are currently worth at the latest market price. This profit is not locked in until you sell.',
         'Realized P&L (Booked Profit): The net profit or loss generated after you exit a position, calculated as: Sale Proceeds minus Cost Basis minus Applicable Fees.',
@@ -22,7 +22,7 @@ export const LearnPage: React.FC = () => {
     },
     {
       title: 'Bid, Ask, Spread, and Liquidity',
-      icon: 'tune',
+      icon: 'swap_horiz',
       content: [
         'The Bid is the highest price buyers are currently offering.',
         'The Ask is the lowest price sellers are currently requesting.',
@@ -31,7 +31,7 @@ export const LearnPage: React.FC = () => {
     },
     {
       title: 'Fees, Slippage, and Frictions',
-      icon: 'warning',
+      icon: 'receipt_long',
       content: [
         'In real trading, trading is not free: brokerage, exchange turnover fees, Securities Transaction Tax (STT), and regulatory charges reduce your net returns.',
         'We Trade models these costs explicitly: ₹20 (or 0.03%) flat brokerage plus 0.05% statutory turnover charges, deducted atomically from your virtual cash balance upon fill.',
@@ -50,42 +50,50 @@ export const LearnPage: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-200">
-      <div>
-        <div className="flex items-center gap-2 mb-1">
-          <span className="font-label-sm text-label-sm text-primary uppercase font-semibold tracking-wider">
-            Academy
-          </span>
-          <span className="text-text-tertiary">/</span>
-          <span className="font-label-sm text-label-sm text-text-secondary uppercase tracking-wider">
-            Curriculum
-          </span>
+    <div className="flex flex-col w-full pb-10 space-y-space-lg max-w-4xl mx-auto animate-in fade-in duration-150">
+      {/* Top Header */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-sm pb-space-xs border-b border-surface-container-high/60">
+        <div>
+          <div className="flex items-center gap-space-xs mb-1">
+            <span className="font-label-sm text-[11px] text-primary uppercase font-semibold tracking-wider">
+              We Trade Academy
+            </span>
+            <span className="text-text-tertiary">/</span>
+            <span className="font-label-sm text-[11px] text-text-secondary uppercase tracking-wider">
+              Curriculum &amp; Knowledge Base
+            </span>
+          </div>
+          <h1 className="font-headline-lg text-headline-lg font-semibold text-text-primary tracking-tight">
+            Market Learning Guide
+          </h1>
+          <p className="font-body-sm text-body-sm text-text-secondary text-xs mt-1">
+            Master the fundamentals of order types, slippage, weighted cost-basis accounting, and disciplined risk management.
+          </p>
         </div>
-        <h1 className="font-headline-lg text-headline-lg text-text-primary">We Trade Academy</h1>
-        <p className="font-body-sm text-body-sm text-text-secondary mt-1">
-          Master the fundamentals of order execution, risk accounting, and market mechanics before risking capital.
-        </p>
+
+        <div className="px-3 py-1.5 rounded-lg bg-surface-subtle border border-border-subtle text-xs font-semibold text-text-secondary">
+          5 Core Modules
+        </div>
       </div>
 
-      <div className="space-y-4">
-        {topics.map((t, idx) => (
+      {/* Topics Stack */}
+      <div className="space-y-space-md">
+        {topics.map((topic, i) => (
           <div
-            key={idx}
-            className="bg-surface-card border border-border-subtle rounded-xl p-5 shadow-sm space-y-3"
+            key={i}
+            className="p-space-md rounded-xl bg-surface-card shadow-[0_1px_8px_rgba(0,0,0,0.04)] border border-surface-container-high/60 flex flex-col space-y-3"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2.5 pb-2 border-b border-surface-container-low">
               <div className="w-8 h-8 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
-                <span className="material-symbols-outlined text-[20px]">{t.icon}</span>
+                <span className="material-symbols-outlined text-[20px]">{topic.icon}</span>
               </div>
-              <h2 className="font-headline-sm text-headline-sm text-text-primary">{t.title}</h2>
+              <h2 className="font-headline-sm text-base text-text-primary font-semibold">
+                {topic.title}
+              </h2>
             </div>
-
-            <div className="space-y-2 pt-1 font-body-sm text-body-sm text-text-secondary leading-relaxed pl-11">
-              {t.content.map((point, pIdx) => (
-                <div key={pIdx} className="flex items-start gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                  <p>{point}</p>
-                </div>
+            <div className="space-y-2 text-xs leading-relaxed text-text-secondary">
+              {topic.content.map((paragraph, idx) => (
+                <p key={idx}>{paragraph}</p>
               ))}
             </div>
           </div>
@@ -94,4 +102,3 @@ export const LearnPage: React.FC = () => {
     </div>
   );
 };
-export default LearnPage;

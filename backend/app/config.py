@@ -20,9 +20,6 @@ class Settings(BaseSettings):
     MAX_QUOTE_AGE_SECONDS: int = 60
     DEFAULT_SLIPPAGE_BPS: float = 5.0  # 0.05%
     
-    # Stitch Integration
-    STITCH_API_KEY: str | None = None
-
     # CORS
     CORS_ORIGINS: list[str] = [
         "http://localhost:5173",

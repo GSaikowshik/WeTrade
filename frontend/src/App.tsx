@@ -64,19 +64,16 @@ export const App: React.FC = () => {
 
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-surface font-body-md text-body-md text-on-surface antialiased">
+      <div className="min-h-screen bg-surface font-body-md text-body-md text-on-surface antialiased flex flex-col">
         <Navbar
           user={user}
           portfolio={portfolio}
           onLogout={handleLogout}
           onOpenAuth={() => setShowAuthModal(true)}
-          onResetSimulation={() => {
-            refreshPortfolio();
-          }}
         />
 
-        <div className="md:pl-60">
-          <main className="relative pt-14 w-full px-space-lg bg-surface">
+        <div className="md:pl-60 pt-14 flex-1 flex flex-col justify-between">
+          <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <Routes>
               <Route
                 path="/"
@@ -114,6 +111,17 @@ export const App: React.FC = () => {
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
+
+          <footer className="border-t border-surface-container-high/60 py-6 text-center text-xs text-text-tertiary bg-surface-container-lowest mt-12">
+            <div className="max-w-7xl mx-auto px-4 space-y-1">
+              <p className="font-medium text-text-secondary">
+                We Trade &copy; {new Date().getFullYear()} — Virtual Simulated Trading & Market Learning Platform for Indian Equities.
+              </p>
+              <p className="text-[11px] text-text-tertiary">
+                Virtual simulated funds only. Not registered with SEBI or any regulatory agency. No real financial investments or monetary liabilities.
+              </p>
+            </div>
+          </footer>
         </div>
 
         {showAuthModal && (
@@ -128,4 +136,3 @@ export const App: React.FC = () => {
     </BrowserRouter>
   );
 };
-export default App;
