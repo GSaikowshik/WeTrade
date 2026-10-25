@@ -1,4 +1,6 @@
 import os
+import json
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
@@ -28,6 +30,19 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
         "*"
     ]
+
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
+    def assemble_cors_origins(cls, v):
+        if isinstance(v, str):
+            v_trimmed = v.strip()
+            if v_trimmed.startswith("[") and v_trimmed.endswith("]"):
+                try:
+                    return json.loads(v_trimmed)
+                except Exception:
+                    pass
+            return [origin.strip() for origin in v_trimmed.split(",") if origin.strip()]
+        return v
 
     model_config = SettingsConfigDict(
         case_sensitive=True,

@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# WeTrade
-=======
 # We Trade — Virtual Trading & Market-Learning Platform
 
 > **Practise the markets. Understand your decisions. Improve without risking real money.**
@@ -191,4 +188,56 @@ Per the PRD (Section 3.2 & Section 23 item 10):
 - **Historical Replay Mode:** Slated for Release 2.
 - **AWS Infrastructure:** Explicitly deferred for local development and beta launch; no AWS services or Kafka/microservices are used.
 
->>>>>>> 7411cc6 (feat: initial release of We Trade virtual trading platform)
+---
+
+## 9. Cloud Deployment Guide (Render + Vercel + Supabase)
+
+### Part A: Database (Supabase)
+1. Create a project at [supabase.com](https://supabase.com).
+2. Go to **Project Settings > Database > Connection string > URI**.
+3. Copy the URI. It looks like:
+   `postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres`
+
+---
+
+### Part B: Backend Deployment on Render
+You can deploy using Render's Blueprint (`render.yaml`) or as a manual Web Service:
+
+#### Option 1: Automatic Blueprint (Recommended)
+1. Push your repository to GitHub.
+2. In [Render Dashboard](https://dashboard.render.com), click **New + > Blueprint**.
+3. Select your `WeTrade` repository. Render will automatically detect `render.yaml`.
+4. Fill in the required environment variable:
+   - `DATABASE_URL`: Your Supabase connection string.
+5. Click **Apply**. Render will automatically build the service, install dependencies, and start Uvicorn on `$PORT`.
+
+#### Option 2: Manual Web Service
+1. In Render Dashboard, click **New + > Web Service**.
+2. Select your repository.
+3. Configure the service:
+   - **Name:** `wetrade-backend`
+   - **Language:** `Python 3`
+   - **Branch:** `main`
+   - **Root Directory:** `backend` (or leave blank if using root `requirements.txt`)
+   - **Build Command:** `pip install --upgrade pip && pip install -r requirements.txt`
+   - **Start Command:** `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+4. Add Environment Variables:
+   - `DATABASE_URL`: `postgresql://postgres:[PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres`
+   - `SECRET_KEY`: A secure 32+ character string (or generate one)
+   - `CORS_ORIGINS`: `*` (or your Vercel domain, e.g. `https://wetrade.vercel.app`)
+5. Once deployed, note down your Render service URL (e.g. `https://wetrade-backend.onrender.com`).
+
+---
+
+### Part C: Frontend Deployment on Vercel
+1. In [Vercel Dashboard](https://vercel.com/new), import your `WeTrade` GitHub repository.
+2. Configure project settings:
+   - **Framework Preset:** `Vite`
+   - **Root Directory:** Click "Edit" and choose `frontend`
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+3. Add Environment Variable:
+   - **Name:** `VITE_API_URL`
+   - **Value:** Your Render backend URL (e.g. `https://wetrade-backend.onrender.com`)
+4. Click **Deploy**.
+5. Once deployed, update `CORS_ORIGINS` in your Render backend settings to include your Vercel URL (e.g. `https://wetrade.vercel.app`) if you prefer not to use `*`.

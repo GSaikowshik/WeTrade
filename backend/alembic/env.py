@@ -6,9 +6,15 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from alembic import context
 
-# Ensure backend_packages and backend app are importable
-sys.path.insert(0, "/home/gandikotasaikowshik/WeTrade/backend_packages")
-sys.path.insert(0, "/home/gandikotasaikowshik/WeTrade/backend")
+# Ensure backend directory and packages are importable dynamically
+current_dir = os.path.dirname(os.path.abspath(__file__))
+backend_dir = os.path.abspath(os.path.join(current_dir, ".."))
+root_dir = os.path.abspath(os.path.join(backend_dir, ".."))
+backend_packages = os.path.join(root_dir, "backend_packages")
+
+if os.path.exists(backend_packages):
+    sys.path.insert(0, backend_packages)
+sys.path.insert(0, backend_dir)
 
 from app.config import settings
 from app.database import Base

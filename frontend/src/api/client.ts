@@ -13,7 +13,12 @@ import {
   OrderType
 } from '../types';
 
-const API_BASE = '/api/v1';
+const RAW_API_URL = (import.meta.env.VITE_API_URL as string | undefined)?.trim();
+const API_BASE = RAW_API_URL
+  ? RAW_API_URL.endsWith('/api/v1')
+    ? RAW_API_URL
+    : `${RAW_API_URL.replace(/\/+$/, '')}/api/v1`
+  : '/api/v1';
 
 class ApiClient {
   private token: string | null = null;
