@@ -59,6 +59,14 @@ class ApiClient {
       return {} as T;
     }
 
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('application/json')) {
+      if (response.status === 405) {
+        throw new Error('405 Method Not Allowed: The frontend is hitting a static route instead of the backend. Make sure VITE_API_URL is configured in your Vercel project settings.');
+      }
+      throw new Error(`API returned non-JSON response (${response.status} ${response.statusText}). Verify that VITE_API_URL points to your active Render backend.`);
+    }
+
     if (!response.ok) {
       let errorMsg = `Request failed (${response.status})`;
       try {
