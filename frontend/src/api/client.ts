@@ -19,7 +19,9 @@ const API_BASE = RAW_API_URL
   ? RAW_API_URL.endsWith('/api/v1')
     ? RAW_API_URL
     : `${RAW_API_URL.replace(/\/+$/, '')}/api/v1`
-  : '/api/v1';
+  : import.meta.env.DEV
+    ? '/api/v1'
+    : 'https://wetrade-a27c.onrender.com/api/v1';
 
 class ApiClient {
   private token: string | null = null;

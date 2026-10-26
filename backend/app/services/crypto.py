@@ -8,6 +8,10 @@ from fastapi import HTTPException, status
 from app.schemas import CryptoTickerOut
 
 BINANCE_PRICE_URL = "https://data-api.binance.vision/api/v3/ticker/price"
+BINANCE_FALLBACK_URLS = [
+    "https://api.binance.us/api/v3/ticker/price",
+    "https://api.binance.com/api/v3/ticker/price",
+]
 DEFAULT_TIMEOUT_SECONDS = 5.0
 
 # Supported cryptocurrency trading pairs
@@ -53,16 +57,31 @@ class BinanceCryptoService:
             )
 
         quote_currency = SUPPORTED_CRYPTO_SYMBOLS[norm_symbol]
+        urls_to_try = [self.base_url]
+        if self.base_url == BINANCE_PRICE_URL:
+            urls_to_try.extend(BINANCE_FALLBACK_URLS)
 
         async def _do_request(c: httpx.AsyncClient) -> CryptoTickerOut:
-            try:
-                resp = await c.get(self.base_url, params={"symbol": norm_symbol})
-            except httpx.TimeoutException:
-                raise HTTPException(
-                    status_code=status.HTTP_504_GATEWAY_TIMEOUT,
-                    detail="Upstream cryptocurrency market data request timed out."
-                )
-            except httpx.RequestError:
+            last_resp = None
+            last_err = None
+
+            for target_url in urls_to_try:
+                try:
+                    resp = await c.get(target_url, params={"symbol": norm_symbol})
+                    if resp.status_code == 200:
+                        last_resp = resp
+                        break
+                    last_resp = resp
+                except (httpx.TimeoutException, httpx.RequestError) as err:
+                    last_err = err
+                    continue
+
+            if last_resp is None:
+                if isinstance(last_err, httpx.TimeoutException):
+                    raise HTTPException(
+                        status_code=status.HTTP_504_GATEWAY_TIMEOUT,
+                        detail="Upstream cryptocurrency market data request timed out."
+                    )
                 raise HTTPException(
                     status_code=status.HTTP_502_BAD_GATEWAY,
                     detail="Unable to connect to upstream cryptocurrency market data provider."
@@ -71,14 +90,14 @@ class BinanceCryptoService:
             # Record timestamp at the moment our backend receives the successful response
             fetch_timestamp = datetime.now(timezone.utc)
 
-            if resp.status_code != 200:
+            if last_resp.status_code != 200:
                 raise HTTPException(
                     status_code=status.HTTP_502_BAD_GATEWAY,
                     detail="Upstream cryptocurrency market data provider returned an error status."
                 )
 
             try:
-                data = resp.json()
+                data = last_resp.json()
             except Exception:
                 raise HTTPException(
                     status_code=status.HTTP_502_BAD_GATEWAY,
