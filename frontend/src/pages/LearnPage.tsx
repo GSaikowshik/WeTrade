@@ -57,26 +57,26 @@ export const LearnPage: React.FC = () => {
   return (
     <div className="flex flex-col w-full pb-14 space-y-6 max-w-4xl mx-auto animate-in fade-in duration-200">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-white/5">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-4 border-b border-slate-200/80">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-[11px] font-mono uppercase tracking-wider text-[#00E676] font-semibold">
+            <span className="text-[11px] font-mono uppercase tracking-wider text-emerald-700 font-semibold">
               We Trade Academy
             </span>
-            <span className="text-white/20">/</span>
-            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400">
+            <span className="text-slate-300">/</span>
+            <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500">
               Curriculum &amp; Knowledge Base
             </span>
           </div>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight">
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
             Market Learning Guide
           </h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Master the mechanics of order execution, slippage models, cost-basis accounting, and trade discipline.
           </p>
         </div>
 
-        <div className="px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-mono font-semibold text-slate-300">
+        <div className="px-3.5 py-1.5 rounded-full bg-slate-100 border border-slate-200 text-xs font-mono font-semibold text-slate-700 shadow-2xs">
           5 Core Modules
         </div>
       </div>
@@ -86,27 +86,27 @@ export const LearnPage: React.FC = () => {
         {topics.map((topic, i) => (
           <div
             key={i}
-            className="glass-card rounded-2xl p-6 flex flex-col space-y-4 hover:border-white/20 transition-all group"
+            className="bg-white rounded-[26px] border border-slate-200/90 p-6 flex flex-col space-y-4 hover:border-emerald-300 transition-all group shadow-sm"
           >
-            <div className="flex items-center gap-3.5 pb-3 border-b border-white/5">
+            <div className="flex items-center gap-3.5 pb-3 border-b border-slate-100">
               <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center font-bold shadow-inner"
+                className="w-10 h-10 rounded-xl flex items-center justify-center font-bold shadow-2xs"
                 style={{
                   backgroundColor: `${topic.color}15`,
-                  color: topic.color,
+                  color: topic.color === '#00E676' ? '#059669' : topic.color,
                   border: `1px solid ${topic.color}30`,
                 }}
               >
                 <span className="material-symbols-outlined text-[22px]">{topic.icon}</span>
               </div>
-              <h2 className="text-base font-bold text-white tracking-tight group-hover:text-[#00E676] transition-colors">
+              <h2 className="text-base font-bold text-slate-900 tracking-tight group-hover:text-emerald-600 transition-colors">
                 {topic.title}
               </h2>
             </div>
-            <div className="space-y-2.5 text-xs leading-relaxed text-slate-300">
+            <div className="space-y-2.5 text-xs leading-relaxed text-slate-600">
               {topic.content.map((paragraph, idx) => (
                 <p key={idx} className="flex items-start gap-2.5">
-                  <span className="text-[#00E676] font-mono font-bold mt-0.5">•</span>
+                  <span className="text-emerald-600 font-mono font-bold mt-0.5">•</span>
                   <span>{paragraph}</span>
                 </p>
               ))}

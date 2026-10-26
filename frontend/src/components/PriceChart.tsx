@@ -22,7 +22,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
 
   if (!bars || bars.length === 0) {
     return (
-      <div className="h-80 w-full flex items-center justify-center bg-[#0B101E]/80 rounded-3xl border border-white/5 text-slate-500 text-xs">
+      <div className="h-80 w-full flex items-center justify-center bg-white rounded-[28px] border border-slate-200/90 text-slate-400 text-xs shadow-sm">
         No price history available for {symbol}.
       </div>
     );
@@ -67,46 +67,46 @@ export const PriceChart: React.FC<PriceChartProps> = ({
     .join(' ');
 
   return (
-    <div className="glass-card rounded-3xl p-6 flex flex-col space-y-4">
+    <div className="bg-white rounded-[28px] border border-slate-200/90 p-6 flex flex-col space-y-4 shadow-sm">
       {/* Chart Top Bar Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/5">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
         <div className="flex flex-wrap items-center gap-3">
-          <span className="text-xl font-black text-white tracking-tight">
+          <span className="text-xl font-black text-slate-900 tracking-tight">
             {symbol}
           </span>
           <div className="flex items-center gap-2 font-mono">
-            <span className="text-xl font-black text-white">
+            <span className="text-xl font-black text-slate-900">
               ₹{fmtMoney(activeClose)}
             </span>
             <span
               className={`font-bold px-2 py-0.5 rounded-lg text-xs ${
                 isUpBar
-                  ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20'
-                  : 'bg-rose-500/15 text-rose-400 border border-rose-500/20'
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  : 'bg-rose-50 text-rose-700 border border-rose-200'
               }`}
             >
               {isUpBar ? '+' : ''}₹{fmtMoney(activeClose - activeOpen)} ({fmtPct(barPctChange)}%)
             </span>
           </div>
 
-          <div className="hidden md:flex items-center gap-3 text-xs text-slate-400 pl-3 border-l border-white/10 font-mono">
-            <span>O: <strong className="text-white">{fmtMoney(activeOpen)}</strong></span>
-            <span>H: <strong className="text-white">{fmtMoney(activeHigh)}</strong></span>
-            <span>L: <strong className="text-white">{fmtMoney(activeLow)}</strong></span>
-            <span>Vol: <strong className="text-white">{(activeVol / 1000).toFixed(0)}k</strong></span>
+          <div className="hidden md:flex items-center gap-3 text-xs text-slate-500 pl-3 border-l border-slate-200 font-mono">
+            <span>O: <strong className="text-slate-900">{fmtMoney(activeOpen)}</strong></span>
+            <span>H: <strong className="text-slate-900">{fmtMoney(activeHigh)}</strong></span>
+            <span>L: <strong className="text-slate-900">{fmtMoney(activeLow)}</strong></span>
+            <span>Vol: <strong className="text-slate-900">{(activeVol / 1000).toFixed(0)}k</strong></span>
           </div>
         </div>
 
         {/* View Toggle & Intervals */}
         <div className="flex items-center gap-2 self-start sm:self-auto">
-          <div className="flex items-center bg-black/40 p-1 rounded-xl border border-white/10 text-xs">
+          <div className="flex items-center bg-slate-100 p-1 rounded-full border border-slate-200 text-xs shadow-2xs">
             <button
               type="button"
               onClick={() => setChartMode('candles')}
-              className={`px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1 ${
+              className={`px-3 py-1 rounded-full font-bold transition-all flex items-center gap-1 ${
                 chartMode === 'candles'
-                  ? 'bg-white/10 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900'
               }`}
             >
               <span className="material-symbols-outlined text-[14px]">candlestick_chart</span>
@@ -115,10 +115,10 @@ export const PriceChart: React.FC<PriceChartProps> = ({
             <button
               type="button"
               onClick={() => setChartMode('line')}
-              className={`px-2.5 py-1 rounded-lg font-bold transition-all flex items-center gap-1 ${
+              className={`px-3 py-1 rounded-full font-bold transition-all flex items-center gap-1 ${
                 chartMode === 'line'
-                  ? 'bg-white/10 text-white shadow-xs'
-                  : 'text-slate-400 hover:text-white'
+                  ? 'bg-white text-slate-900 shadow-xs'
+                  : 'text-slate-500 hover:text-slate-900'
               }`}
             >
               <span className="material-symbols-outlined text-[14px]">show_chart</span>
@@ -126,16 +126,16 @@ export const PriceChart: React.FC<PriceChartProps> = ({
             </button>
           </div>
 
-          <div className="flex items-center bg-black/40 p-1 rounded-xl border border-white/10 text-xs font-mono">
+          <div className="flex items-center bg-slate-100 p-1 rounded-full border border-slate-200 text-xs font-mono shadow-2xs">
             {['15m', '1H', '1D'].map((res) => (
               <button
                 key={res}
                 type="button"
                 onClick={() => onIntervalChange(res)}
-                className={`px-3 py-1 rounded-lg font-bold transition-all ${
+                className={`px-3 py-1 rounded-full font-bold transition-all ${
                   interval === res
-                    ? 'bg-emerald-500 text-slate-950 shadow-[0_0_10px_rgba(16,185,129,0.3)]'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-emerald-500 text-slate-950 shadow-xs'
+                    : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
                 {res}
@@ -152,16 +152,6 @@ export const PriceChart: React.FC<PriceChartProps> = ({
           className="w-full h-auto min-w-[640px]"
           onMouseLeave={() => setHoverIndex(null)}
         >
-          <defs>
-            <filter id="candleGlow">
-              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
-          </defs>
-
           {/* Gridlines */}
           {[0.2, 0.4, 0.6, 0.8].map((ratio) => {
             const gridVal = minPrice + priceRange * ratio;
@@ -173,13 +163,13 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                   y1={y}
                   x2={chartWidth - paddingX}
                   y2={y}
-                  stroke="rgba(255, 255, 255, 0.05)"
+                  stroke="#E2E8F0"
                   strokeDasharray="4 4"
                 />
                 <text
                   x={chartWidth - paddingX + 6}
                   y={y + 3}
-                  fill="#64748B"
+                  fill="#94A3B8"
                   fontSize="10"
                   fontFamily="Geist, monospace"
                 >
@@ -195,7 +185,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
             y1={chartHeight}
             x2={chartWidth - paddingX}
             y2={chartHeight}
-            stroke="rgba(255, 255, 255, 0.06)"
+            stroke="#E2E8F0"
           />
 
           {/* Volume Bars */}
@@ -211,8 +201,8 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                 y={chartHeight + volumeHeight - vHeight}
                 width={candleWidth}
                 height={vHeight}
-                fill={isUp ? '#00E676' : '#FF385C'}
-                opacity="0.3"
+                fill={isUp ? '#10B981' : '#EF4444'}
+                opacity="0.35"
               />
             );
           })}
@@ -234,7 +224,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
 
               const bodyTop = Math.min(yOpen, yClose);
               const bodyHeight = Math.max(Math.abs(yClose - yOpen), 2);
-              const color = isUp ? '#00E676' : '#FF385C';
+              const color = isUp ? '#10B981' : '#EF4444';
 
               return (
                 <g
@@ -257,7 +247,6 @@ export const PriceChart: React.FC<PriceChartProps> = ({
                     height={bodyHeight}
                     fill={color}
                     rx="1.5"
-                    filter="url(#candleGlow)"
                   />
                 </g>
               );
@@ -266,11 +255,10 @@ export const PriceChart: React.FC<PriceChartProps> = ({
             <g>
               <polyline
                 fill="none"
-                stroke="#00E676"
+                stroke="#10B981"
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                filter="url(#candleGlow)"
                 points={linePoints}
               />
             </g>
@@ -283,7 +271,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({
               y1={10}
               x2={paddingX + hoverIndex * candleStep + candleStep / 2}
               y2={chartHeight + volumeHeight}
-              stroke="rgba(255, 255, 255, 0.3)"
+              stroke="rgba(0, 0, 0, 0.25)"
               strokeDasharray="2 2"
               strokeWidth="1"
             />
@@ -292,9 +280,9 @@ export const PriceChart: React.FC<PriceChartProps> = ({
       </div>
 
       {/* Chart Footer Notice */}
-      <div className="pt-2 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 font-mono">
+      <div className="pt-2 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 font-mono">
         <span className="flex items-center gap-2">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
           <span>We Trade Seeded Feed • Delayed simulated OHLCV data</span>
         </span>
         <span className="text-[11px]">
