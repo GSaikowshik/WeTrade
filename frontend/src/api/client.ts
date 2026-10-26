@@ -73,9 +73,13 @@ class ApiClient {
       try {
         const errorData = await response.json();
         if (errorData.detail) {
-          errorMsg = typeof errorData.detail === 'string'
-            ? errorData.detail
-            : JSON.stringify(errorData.detail);
+          if (typeof errorData.detail === 'string') {
+            errorMsg = errorData.detail;
+          } else if (Array.isArray(errorData.detail) && errorData.detail[0]?.msg) {
+            errorMsg = errorData.detail[0].msg;
+          } else {
+            errorMsg = JSON.stringify(errorData.detail);
+          }
         }
       } catch {
         // ignore

@@ -1,6 +1,12 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
+import type { User } from '../types';
+
+interface LandingPageProps {
+  user?: User | null;
+  onOpenAuth?: (mode?: 'login' | 'register') => void;
+}
 
 const markets = [
   {
@@ -95,7 +101,7 @@ const Sparkline: React.FC<{ down?: boolean }> = ({ down }) => (
   </svg>
 );
 
-const LandingPage: React.FC = () => {
+const LandingPage: React.FC<LandingPageProps> = ({ user, onOpenAuth }) => {
   return (
     <div className="min-h-screen overflow-hidden bg-white text-slate-900">
       {/* Navigation */}
@@ -128,18 +134,37 @@ const LandingPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Link
-              to="/dashboard"
-              className="hidden rounded-full px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 sm:inline-flex"
-            >
-              Explore demo
-            </Link>
-            <Link
-              to="/dashboard"
-              className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:bg-emerald-400"
-            >
-              Get started <span aria-hidden="true">↗</span>
-            </Link>
+            {user ? (
+              <>
+                <span className="hidden items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-700 sm:inline-flex">
+                  <span className="h-2 w-2 rounded-full bg-emerald-500" />
+                  {user.email}
+                </span>
+                <Link
+                  to="/dashboard"
+                  className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:bg-emerald-400"
+                >
+                  Dashboard <span aria-hidden="true">→</span>
+                </Link>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => onOpenAuth?.('login')}
+                  className="rounded-full px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100"
+                >
+                  Sign In
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onOpenAuth?.('register')}
+                  className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/20 transition hover:-translate-y-0.5 hover:bg-emerald-400"
+                >
+                  Open Demo <span aria-hidden="true">↗</span>
+                </button>
+              </>
+            )}
           </div>
         </nav>
       </header>
@@ -170,12 +195,22 @@ const LandingPage: React.FC = () => {
               </p>
 
               <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  to="/dashboard"
-                  className="inline-flex min-h-14 items-center justify-center gap-3 rounded-full bg-emerald-500 px-7 text-base font-bold text-slate-950 shadow-xl shadow-emerald-500/20 transition hover:-translate-y-1 hover:bg-emerald-400"
-                >
-                  Start practising for free <span aria-hidden="true">→</span>
-                </Link>
+                {user ? (
+                  <Link
+                    to="/dashboard"
+                    className="inline-flex min-h-14 items-center justify-center gap-3 rounded-full bg-emerald-500 px-7 text-base font-bold text-slate-950 shadow-xl shadow-emerald-500/20 transition hover:-translate-y-1 hover:bg-emerald-400"
+                  >
+                    Go to Dashboard <span aria-hidden="true">→</span>
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => onOpenAuth?.('register')}
+                    className="inline-flex min-h-14 items-center justify-center gap-3 rounded-full bg-emerald-500 px-7 text-base font-bold text-slate-950 shadow-xl shadow-emerald-500/20 transition hover:-translate-y-1 hover:bg-emerald-400"
+                  >
+                    Start practising for free <span aria-hidden="true">→</span>
+                  </button>
+                )}
                 <a
                   href="#markets"
                   className="inline-flex min-h-14 items-center justify-center rounded-full border border-slate-200 bg-white px-7 text-base font-semibold text-slate-700 transition hover:border-slate-300 hover:bg-slate-50"
@@ -499,12 +534,22 @@ const LandingPage: React.FC = () => {
                 Explore the markets, practise your strategy and start learning
                 with virtual money.
               </p>
-              <Link
-                to="/dashboard"
-                className="mt-8 inline-flex items-center justify-center gap-3 rounded-full bg-slate-950 px-7 py-4 font-bold text-white shadow-lg transition hover:-translate-y-1 hover:bg-slate-800"
-              >
-                Enter WeTrade <span aria-hidden="true">→</span>
-              </Link>
+              {user ? (
+                <Link
+                  to="/dashboard"
+                  className="mt-8 inline-flex items-center justify-center gap-3 rounded-full bg-slate-950 px-7 py-4 font-bold text-white shadow-lg transition hover:-translate-y-1 hover:bg-slate-800"
+                >
+                  Enter WeTrade <span aria-hidden="true">→</span>
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => onOpenAuth?.('register')}
+                  className="mt-8 inline-flex items-center justify-center gap-3 rounded-full bg-slate-950 px-7 py-4 font-bold text-white shadow-lg transition hover:-translate-y-1 hover:bg-slate-800"
+                >
+                  Open Free Demo <span aria-hidden="true">→</span>
+                </button>
+              )}
             </div>
           </div>
         </section>
@@ -528,12 +573,22 @@ const LandingPage: React.FC = () => {
             guarantee future results.
           </p>
 
-          <Link
-            to="/dashboard"
-            className="shrink-0 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
-          >
-            Open demo →
-          </Link>
+          {user ? (
+            <Link
+              to="/dashboard"
+              className="shrink-0 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+            >
+              Dashboard →
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={() => onOpenAuth?.('register')}
+              className="shrink-0 text-sm font-semibold text-emerald-700 hover:text-emerald-800"
+            >
+              Open demo →
+            </button>
+          )}
         </div>
       </footer>
     </div>

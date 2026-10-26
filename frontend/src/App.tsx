@@ -5,6 +5,7 @@ import {
   Route,
   Navigate,
   useLocation,
+  useNavigate,
 } from 'react-router-dom';
 
 import { Analytics } from '@vercel/analytics/react';
@@ -24,34 +25,69 @@ import { api } from './api/client';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isLandingPage = location.pathname === '/';
 
   const [user, setUser] = useState<User | null>(null);
   const [portfolio, setPortfolio] = useState<PortfolioSummary | null>(null);
   const [assets, setAssets] = useState<Asset[]>([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'login' | 'register'>('login');
+
+  const handleOpenAuth = (mode: 'login' | 'register' = 'login') => {
+    setAuthModalMode(mode);
+    setShowAuthModal(true);
+  };
+
+  const handleAuthSuccess = async () => {
+    try {
+      const me = await api.getMe();
+      setUser(me);
+      try {
+        const p = await api.getPortfolio();
+        setPortfolio(p);
+      } catch {
+        // ignore initial portfolio fetch warning
+      }
+    } catch (err) {
+      console.error('Failed to load user profile after auth', err);
+    }
+
+    setShowAuthModal(false);
+
+    if (location.pathname === '/') {
+      navigate('/dashboard');
+    }
+  };
 
   useEffect(() => {
     const bootstrap = async () => {
+      // 1. Check existing authenticated session
+      if (api.getToken()) {
+        try {
+          const me = await api.getMe();
+          setUser(me);
+
+          try {
+            const p = await api.getPortfolio();
+            setPortfolio(p);
+          } catch (pErr) {
+            console.warn('Portfolio not yet initialized or temporarily unavailable', pErr);
+          }
+        } catch (authErr) {
+          console.warn('Stored session expired or invalid, resetting token', authErr);
+          api.logout();
+          setUser(null);
+          setPortfolio(null);
+        }
+      }
+
+      // 2. Fetch market assets independently
       try {
         const assetList = await api.getAssets();
         setAssets(assetList);
-
-        if (api.getToken()) {
-          try {
-            const me = await api.getMe();
-            setUser(me);
-
-            const p = await api.getPortfolio();
-            setPortfolio(p);
-          } catch {
-            api.logout();
-            setUser(null);
-            setPortfolio(null);
-          }
-        }
       } catch (err) {
-        console.error('Failed to bootstrap app', err);
+        console.error('Failed to bootstrap asset quotes', err);
       }
     };
 
@@ -83,7 +119,7 @@ const AppContent: React.FC = () => {
           user={user}
           portfolio={portfolio}
           onLogout={handleLogout}
-          onOpenAuth={() => setShowAuthModal(true)}
+          onOpenAuth={(mode) => handleOpenAuth(mode || 'register')}
         />
       )}
 
@@ -103,7 +139,15 @@ const AppContent: React.FC = () => {
         >
           <Routes>
             {/* Public landing page */}
-            <Route path="/" element={<LandingPage />} />
+            <Route
+              path="/"
+              element={
+                <LandingPage
+                  user={user}
+                  onOpenAuth={handleOpenAuth}
+                />
+              }
+            />
 
             {/* Existing trading dashboard */}
             <Route
@@ -113,7 +157,7 @@ const AppContent: React.FC = () => {
                   user={user}
                   portfolio={portfolio}
                   onRefreshPortfolio={refreshPortfolio}
-                  onOpenAuth={() => setShowAuthModal(true)}
+                  onOpenAuth={() => handleOpenAuth('login')}
                 />
               }
             />
@@ -179,8 +223,9 @@ const AppContent: React.FC = () => {
 
       {showAuthModal && (
         <AuthModal
+          initialMode={authModalMode}
           onClose={() => setShowAuthModal(false)}
-          onSuccess={() => window.location.reload()}
+          onSuccess={handleAuthSuccess}
         />
       )}
 
@@ -190,7 +235,12 @@ const AppContent: React.FC = () => {
 };
 
 export const App: React.FC = () => (
-  <BrowserRouter>
+  <BrowserRouter
+    future={{
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+    }}
+  >
     <AppContent />
   </BrowserRouter>
 );

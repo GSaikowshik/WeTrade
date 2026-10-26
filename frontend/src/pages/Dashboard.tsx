@@ -10,7 +10,7 @@ interface DashboardProps {
   user: User | null;
   portfolio: PortfolioSummary | null;
   onRefreshPortfolio: () => void;
-  onOpenAuth: () => void;
+  onOpenAuth: (mode?: 'login' | 'register') => void;
 }
 
 export const Dashboard: React.FC<DashboardProps> = ({
@@ -128,8 +128,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
             {!user && (
               <button
-                onClick={onOpenAuth}
-                className="px-4 py-2.5 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold transition-all"
+                type="button"
+                onClick={() => onOpenAuth('login')}
+                className="px-4 py-2.5 rounded-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 text-xs font-bold transition-all shadow-2xs"
               >
                 Sign In
               </button>

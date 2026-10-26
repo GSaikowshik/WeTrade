@@ -7,7 +7,7 @@ interface NavbarProps {
   user: User | null;
   portfolio: PortfolioSummary | null;
   onLogout: () => void;
-  onOpenAuth: () => void;
+  onOpenAuth: (mode?: 'login' | 'register') => void;
   onResetSimulation?: () => void;
 }
 
@@ -131,7 +131,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 type="button"
                 onClick={() => {
                   if (onResetSimulation) onResetSimulation();
-                  else if (!user) onOpenAuth();
+                  else if (!user) onOpenAuth('register');
                 }}
                 className="text-[11px] font-semibold text-emerald-700 hover:text-emerald-800 transition-colors flex items-center gap-1"
               >
@@ -235,7 +235,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           ) : (
             <button
               type="button"
-              onClick={onOpenAuth}
+              onClick={() => onOpenAuth('register')}
               className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-xs font-bold text-slate-950 shadow-sm transition hover:bg-emerald-400"
             >
               <span className="material-symbols-outlined text-[16px]">bolt</span>
