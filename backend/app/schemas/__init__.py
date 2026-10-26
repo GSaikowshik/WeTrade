@@ -72,6 +72,17 @@ class BarOut(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+# Crypto Market Data (Binance Public Spot)
+class CryptoTickerOut(BaseModel):
+    symbol: str
+    price: float
+    quote_currency: str = "USDT"
+    source: str = "binance_public_spot"
+    fetched_at: datetime = Field(
+        ...,
+        description="UTC timestamp when this price was fetched by our server (not an exchange trade event timestamp)."
+    )
+
 class WatchlistAdd(BaseModel):
     asset_id: int
 

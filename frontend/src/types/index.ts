@@ -49,6 +49,14 @@ export interface Quote {
   observed_at: string;
 }
 
+export interface CryptoTicker {
+  symbol: string;
+  price: number;
+  quote_currency: string;
+  source: string;
+  fetched_at: string;
+}
+
 export interface Position {
   id: number;
   asset_id: number;

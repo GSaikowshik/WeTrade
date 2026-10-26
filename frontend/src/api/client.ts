@@ -10,7 +10,8 @@ import {
   JournalEntry,
   AnalyticsSummary,
   OrderSide,
-  OrderType
+  OrderType,
+  CryptoTicker
 } from '../types';
 
 const RAW_API_URL = (import.meta.env.VITE_API_URL as string | undefined)?.trim();
@@ -128,6 +129,15 @@ class ApiClient {
 
   async getAssetBars(assetId: number, interval = '1D'): Promise<Bar[]> {
     return this.request<Bar[]>(`/assets/${assetId}/bars?interval=${interval}`);
+  }
+
+  // Crypto Market Data (Binance Public Spot)
+  async getCryptoTickers(): Promise<CryptoTicker[]> {
+    return this.request<CryptoTicker[]>('/crypto/tickers');
+  }
+
+  async getCryptoTicker(symbol: string): Promise<CryptoTicker> {
+    return this.request<CryptoTicker>(`/crypto/ticker?symbol=${encodeURIComponent(symbol)}`);
   }
 
   // Watchlist

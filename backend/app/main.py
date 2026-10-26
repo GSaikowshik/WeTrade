@@ -15,7 +15,8 @@ from app.routers import (
     assets,
     orders,
     portfolio,
-    journal
+    journal,
+    crypto
 )
 
 @asynccontextmanager
@@ -56,6 +57,7 @@ app.include_router(assets.router, prefix=settings.API_V1_STR)
 app.include_router(orders.router, prefix=settings.API_V1_STR)
 app.include_router(portfolio.router, prefix=settings.API_V1_STR)
 app.include_router(journal.router, prefix=settings.API_V1_STR)
+app.include_router(crypto.router, prefix=settings.API_V1_STR)
 
 # Mount static frontend build if present
 frontend_dist = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../frontend/dist"))

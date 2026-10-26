@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Asset, PortfolioSummary, Order, User, AnalyticsSummary } from '../types';
 import { api } from '../api/client';
 import { OrderTicket } from '../components/OrderTicket';
+import { CryptoMarketStrip } from '../components/CryptoMarketStrip';
 import { fmtMoney, fmtPct, toNum } from '../utils/format';
 
 interface DashboardProps {
@@ -287,6 +288,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Global Cryptocurrency Public Spot Feed (Binance) */}
+      <section>
+        <CryptoMarketStrip />
       </section>
 
       {/* Main Grid: Indian Equities Market & Capital Allocation */}

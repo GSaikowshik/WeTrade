@@ -4,6 +4,7 @@ import { Asset, Bar, PortfolioSummary } from '../types';
 import { api } from '../api/client';
 import { PriceChart } from '../components/PriceChart';
 import { OrderTicket } from '../components/OrderTicket';
+import { CryptoMarketStrip } from '../components/CryptoMarketStrip';
 import { fmtMoney, fmtPct, toNum } from '../utils/format';
 
 interface MarketsProps {
@@ -21,6 +22,7 @@ export const Markets: React.FC<MarketsProps> = ({ portfolio, onRefreshPortfolio 
   const [watchlistIds, setWatchlistIds] = useState<number[]>([]);
   const [showOrderTicket, setShowOrderTicket] = useState(false);
   const [loadingBars, setLoadingBars] = useState(false);
+  const [marketTab, setMarketTab] = useState<'equities' | 'crypto'>('equities');
 
   useEffect(() => {
     loadAssets();
@@ -104,9 +106,67 @@ export const Markets: React.FC<MarketsProps> = ({ portfolio, onRefreshPortfolio 
 
   return (
     <div className="flex flex-col w-full pb-16 space-y-6 animate-in fade-in duration-150">
-      {/* Top Stock Detail Header */}
-      {selectedAsset && (
-        <header className="glass-card rounded-3xl p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 relative overflow-hidden">
+      {/* Market Category Selector */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-white/5">
+        <div>
+          <h1 className="text-2xl font-black text-white tracking-tight">Market Terminals</h1>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Switch between Indian equities trading simulation and global crypto spot feeds
+          </p>
+        </div>
+
+        <div className="flex items-center bg-[#111726] p-1 rounded-2xl border border-white/10 shadow-inner self-start sm:self-auto">
+          <button
+            type="button"
+            onClick={() => setMarketTab('equities')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              marketTab === 'equities'
+                ? 'bg-emerald-500 text-slate-950 shadow-[0_0_15px_rgba(16,185,129,0.3)]'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[16px]">show_chart</span>
+            <span>NSE Equities ({assets.length})</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMarketTab('crypto')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+              marketTab === 'crypto'
+                ? 'bg-amber-400 text-slate-950 shadow-[0_0_15px_rgba(245,158,11,0.3)]'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[16px]">currency_bitcoin</span>
+            <span>Binance Crypto (3)</span>
+          </button>
+        </div>
+      </div>
+
+      {marketTab === 'crypto' ? (
+        <div className="space-y-6">
+          <CryptoMarketStrip />
+
+          {/* Separation Disclosure Card */}
+          <div className="glass-card rounded-3xl p-6 border border-amber-500/20 bg-amber-500/[0.03]">
+            <div className="flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-2xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
+                <span className="material-symbols-outlined text-[20px]">shield</span>
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white">Market Separation &amp; Simulation Policy</h3>
+                <p className="text-xs text-slate-400 mt-1 leading-relaxed">
+                  Cryptocurrency prices displayed here are real-time public spot quotes fetched from Binance for market awareness and cross-asset price study. We Trade's virtual INR wallet, virtual ₹1,00,000 balance, order routing, and portfolio ledger apply strictly to simulated Indian equities (NSE). Cryptocurrency orders and ledger impacts are not supported.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Top Stock Detail Header */}
+          {selectedAsset && (
+            <header className="glass-card rounded-3xl p-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 relative overflow-hidden">
           <div className="flex flex-wrap items-center gap-6">
             <div className="flex items-center gap-3.5">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500/20 via-teal-400/20 to-cyan-500/20 border border-emerald-500/40 flex items-center justify-center font-black text-lg text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.25)]">
@@ -440,7 +500,7 @@ export const Markets: React.FC<MarketsProps> = ({ portfolio, onRefreshPortfolio 
       </div>
 
       {/* Order Ticket Modal */}
-      {showOrderTicket && selectedAsset && (
+      {marketTab === 'equities' && showOrderTicket && selectedAsset && (
         <OrderTicket
           asset={selectedAsset}
           availableCash={portfolio ? toNum(portfolio.available_cash) : 100000}
@@ -454,6 +514,8 @@ export const Markets: React.FC<MarketsProps> = ({ portfolio, onRefreshPortfolio 
             loadAssets();
           }}
         />
+      )}
+        </>
       )}
     </div>
   );
